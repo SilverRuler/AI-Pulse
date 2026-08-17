@@ -11,10 +11,12 @@ import AdminModal from './components/AdminModal';
 import AboutCenter from './components/AboutCenter';
 import AboutCeo from './components/AboutCeo';
 import Footer from './components/Footer';
-import { newsletters } from './data/newsletters';
+import { newsletters as defaultNewsletters } from './data/newsletters';
+import { API_BASE_URL } from './utils/api';
 
 export default function App() {
   const [theme, setTheme] = useState('light');
+  const [newslettersList, setNewslettersList] = useState(defaultNewsletters);
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
@@ -60,6 +62,16 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
+
+    // Fetch latest newsletters from Redis API
+    fetch(`${API_BASE_URL}/api/newsletters`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.newsletters) && data.newsletters.length > 0) {
+          setNewslettersList(data.newsletters);
+        }
+      })
+      .catch((err) => console.error('Failed to load newsletters from API', err));
   }, [theme]);
 
   const toggleTheme = () => {
@@ -120,7 +132,7 @@ export default function App() {
     }
   };
 
-  const featuredIssue = newsletters.find((n) => n.featured) || newsletters[0];
+  const featuredIssue = newslettersList.find((n) => n.featured) || newslettersList[0];
 
   return (
     <div className="app">
@@ -152,7 +164,7 @@ export default function App() {
               onSubscribeSuccess={handleHeroSubscribeSuccess}
             />
             <FeaturedIssue issue={featuredIssue} onOpenReader={setSelectedIssue} />
-            <ArchiveFeed newsletters={newsletters} onOpenReader={setSelectedIssue} />
+            <ArchiveFeed newsletters={newslettersList} onOpenReader={setSelectedIssue} />
           </>
         )}
       </main>
