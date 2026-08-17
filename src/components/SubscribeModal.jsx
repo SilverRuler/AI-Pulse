@@ -4,7 +4,7 @@ import { categories } from '../data/newsletters';
 
 export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDirectSubscribe }) {
   const [email, setEmail] = useState('');
-  const [selectedTopics, setSelectedTopics] = useState(['llm', 'opensource']);
+  const [selectedTopics, setSelectedTopics] = useState(['care', 'policy']);
   const [isSuccess, setIsSuccess] = useState(false);
 
   if (!isOpen) return null;

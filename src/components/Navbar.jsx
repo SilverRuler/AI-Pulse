@@ -1,11 +1,11 @@
 import React from 'react';
 import { HeartPulse, Moon, Sun, User, LogOut } from 'lucide-react';
 
-export default function Navbar({ theme, toggleTheme, currentUser, onOpenAuth, onLogout }) {
+export default function Navbar({ theme, toggleTheme, currentUser, onOpenAuth, onLogout, onGoHome }) {
   return (
     <header className="navbar">
       <div className="container nav-inner">
-        <a href="/" className="brand">
+        <a href="#" onClick={(e) => { e.preventDefault(); onGoHome && onGoHome(); }} className="brand">
           <div className="brand-icon">
             <HeartPulse size={20} />
           </div>

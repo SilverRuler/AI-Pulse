@@ -1,9 +1,10 @@
 export const categories = [
   { id: 'all', name: '전체 이슈', icon: 'Sparkles' },
-  { id: 'llm', name: 'LLM & 모델', icon: 'Bot' },
-  { id: 'opensource', name: '오픈소스 & 툴', icon: 'Terminal' },
-  { id: 'business', name: '테크 & 비즈니스', icon: 'TrendingUp' },
-  { id: 'research', name: '논문 & 리서치', icon: 'BookOpen' },
+  { id: 'care', name: '어르신 돌봄', icon: 'Heart' },
+  { id: 'nursing', name: '어르신 요양케어', icon: 'HeartPulse' },
+  { id: 'info', name: '노인정보 관리', icon: 'FileText' },
+  { id: 'health', name: '건강 관리법', icon: 'Activity' },
+  { id: 'policy', name: '복지정책', icon: 'ShieldCheck' },
 ];
 
 export const newsletters = [
@@ -11,39 +12,38 @@ export const newsletters = [
     id: 'issue-42',
     issueNumber: 42,
     date: '2026-08-18',
-    title: 'GPT-5 아키텍처 루머 정리와 Llama 3.3의 획기적인 온디바이스 경량화',
-    category: 'llm',
-    categoryName: 'LLM & 모델',
-    readTime: '4분 요약',
+    title: '2026년 장기요양보험 본인부담금 경감 혜택 및 주간보호센터 지원금 총정리',
+    category: 'policy',
+    categoryName: '복지정책',
+    readTime: '3분 요약',
     featured: true,
-    views: '2,410',
-    likes: 184,
-    summary: '차세대 대규모 파운데이션 모델의 추론 효율화 트렌드와 온디바이스 AI 혁신, 엔터프라이즈 환경에서의 에이전트 도입 사례를 핵심만 요약합니다.',
+    views: '3,820',
+    likes: 245,
+    summary: '보건복지부의 2026년 최신 노인장기요양보험 본인부담금 경감 기준과 1~5등급 및 인지지원등급별 주야간보호 급여 한도액 인상 내용을 3분 핵심 요약해 드립니다.',
     bullets: [
-      'OpenAI 차세대 추론 엔진 o3의 멀티스텝 추론 벤치마크 95% 돌파 소식',
-      'Meta, 파라미터당 효율 30% 개선한 양자화 기술 공개 (모바일 구동 가능)',
-      '실무 개발자를 위한 프롬프트 캐싱 비용 80% 절감 패턴 분석'
+      '장기요양 1~5등급 재가급여 월 이용 한도액 전년 대비 평균 6.8% 인상',
+      '소득수준별 본인부담 감경(40%~60%) 대상자 기준 완화 및 신청 방법',
+      '주간보호센터 이용 시 식사 재료비 및 비급여 항목 지원 지자체 바우처 현황'
     ],
     content: {
-      tldr: '오늘의 핵심 요약: 대형 언어 모델(LLM) 시장이 단순한 파라미터 크기 경쟁에서 "추론 시간 컴퓨팅(Inference-time Compute)"과 "온디바이스 경량화"의 2트랙 경쟁으로 재편되고 있습니다.',
+      tldr: '오늘의 핵심 요약: 2026년 노인장기요양보험 재가급여 한도액이 인상되어 주간보호센터를 이용하시는 어르신들의 본인부담 비율이 대폭 완화되었습니다.',
       sections: [
         {
-          heading: '1. 차세대 추론 모델 o3와 에이전틱 워크플로우',
-          text: 'OpenAI의 최신 추론 체계는 기존 단순 텍스트 생성을 넘어, 스스로 생각하고 반성(Self-Reflection)하는 단계를 거칩니다. 코딩 및 복잡한 수학 문제 해결에서 기존 GPT-4o 대비 최대 40% 높은 성공률을 기록했으며, 소프트웨어 엔지니어링 벤치마크(SWE-bench)에서도 사람 수준의 자동 버그 픽스를 시연했습니다.'
+          heading: '1. 장기요양 재가급여 한도액 및 주간보호 이용 시간 확대',
+          text: '2026년도 장기요양 등급별 월 한도액이 상향 조정되었습니다. 3등급 어르신의 경우 월 최대 145만 원 한도 내에서 주간보호센터를 주 5~6일 전일(8시간 이상) 이용할 수 있으며, 주간보호 내 맞춤형 재활 운동 및 인지 프로그램이 기본 포함됩니다.'
         },
         {
-          heading: '2. 오픈소스 진영: 양자화와 온디바이스 AI의 약진',
-          text: 'Meta와 오픈소스 커뮤니티는 4비트/2비트 초경량 양자화 기법을 통해 스마트폰과 맥북에서 초당 60토큰 이상의 고속 추론을 달성했습니다. 이는 데이터 프라이버시가 중요한 사내 문서 검색(RAG) 및 개인 비서 앱 개발에 거대한 전환점이 될 것으로 전망됩니다.'
+          heading: '2. 본인부담금 60% 경감 대상자 확대',
+          text: '중위소득 100% 이하 가구에 대한 본인부담금 감경 제도가 확대되어, 월 납부 실부담금이 기존 대비 약 3~5만 원가량 줄어듭니다. 가까운 국민건강보험공단 지사 또는 주간보호센터 상담을 통해 즉시 확인 가능합니다.'
         },
         {
-          heading: '3. 실무 팁: API 비용 80% 아끼는 프롬프트 캐싱 기법',
-          text: '최근 주요 LLM API들이 일제히 프롬프트 캐싱(Prompt Caching) 기능을 기본 지원하기 시작했습니다. 시스템 프롬프트와 참조 문서를 고정하고 질문만 변경할 경우, 입력 토큰 비용이 75~85% 절감되며 응답 속도는 2배 이상 빨라집니다.'
+          heading: '3. 보호자를 위한 실전 팁: 가족휴가제 활용법',
+          text: '어르신을 직접 모시는 가족 보호자의 소진을 예방하기 위해, 1년에 최대 10일까지 주야간보호 단기보호 및 24시간 돌봄을 지원하는 종일 방문요양 서비스가 함께 제공됩니다.'
         }
       ],
       sources: [
-        { name: 'Arxiv Research Paper', url: 'https://arxiv.org' },
-        { name: 'Meta AI Blog', url: 'https://ai.meta.com' },
-        { name: 'OpenAI Developer Docs', url: 'https://platform.openai.com' }
+        { name: '보건복지부 정책 브리핑', url: 'https://www.mohw.go.kr' },
+        { name: '국민건강보험공단 장기요양보험', url: 'https://www.longtermcare.or.kr' }
       ]
     }
   },
@@ -51,29 +51,29 @@ export const newsletters = [
     id: 'issue-41',
     issueNumber: 41,
     date: '2026-08-16',
-    title: '바이브 코딩(Vibe Coding) 시대: AI 에이전트 IDE 비교 및 실전 생산성 가이드',
-    category: 'opensource',
-    categoryName: '오픈소스 & 툴',
+    title: '낙상 사고 제로(Zero): 어르신 실내 안전 환경 조성 및 근력 재활 수칙',
+    category: 'care',
+    categoryName: '어르신 돌봄',
     readTime: '3분 요약',
     featured: false,
-    views: '1,890',
-    likes: 142,
-    summary: 'Cursor, Windsurf, Claude Code 등 자율 코딩 에이전트의 차이점과 개발자가 생산성을 5배 끌어올리는 실전 팁을 정리했습니다.',
+    views: '2,940',
+    likes: 189,
+    summary: '가정 및 센터 내 어르신 낙상 사고의 70%를 예방할 수 있는 문턱 제거, 화장실 미끄럼 방지 매트 설치 및 하지 근력 강화 운동법.',
     bullets: [
-      'Cursor vs Windsurf vs Claude Code 실제 프로젝트 빌드 벤치마크',
-      '컨텍스트 윈도우 관리와 멀티 파일 리팩토링 최적화 팁',
-      '오픈소스 대안: Ollama 기반 로컬 AI 코딩 환경 세팅법'
+      '화장실 및 침실 주변 필수 안전 손잡이 배치 가이드',
+      '하지 근력 및 균형 감각을 깨우는 하루 10분 의자 스트레칭',
+      '시흥시 등 지자체 낙상 예방 복지용구 국비 지원 신청 팁'
     ],
     content: {
-      tldr: '개발자의 역할이 "코드 작성자"에서 "코드 디렉터 및 아키텍트"로 진화하고 있습니다.',
+      tldr: '어르신 낙상은 사후 치료보다 사전 환경 개선과 가벼운 보행 재활 운동이 가장 중요합니다.',
       sections: [
         {
-          heading: '차세대 코딩 에이전트의 부상',
-          text: '단순 코드 자동완성을 넘어 전체 프로젝트 레포지토리를 인덱싱하고 빌드 에러를 스스로 수정하는 에이전틱 IDE가 대세가 되었습니다. 특히 터미널 명령까지 자율 실행하는 환경이 정착되고 있습니다.'
+          heading: '가정 내 안전 환경 조성 체크리스트',
+          text: '야간 이동 시 센서 조명 설치, 바닥 전선 정리, 화장실 안전바 설치만으로도 어르신 낙상 위험을 80% 이상 줄일 수 있습니다.'
         }
       ],
       sources: [
-        { name: 'GitHub Trends', url: 'https://github.com' }
+        { name: '중앙치매센터 케어가이드', url: 'https://www.nid.or.kr' }
       ]
     }
   },
@@ -81,29 +81,29 @@ export const newsletters = [
     id: 'issue-40',
     issueNumber: 40,
     date: '2026-08-14',
-    title: 'AI 반도체 전쟁: 엔비디아 블랙웰 양산 돌입과 커스텀 ASIC 칩의 부상',
-    category: 'business',
-    categoryName: '테크 & 비즈니스',
-    readTime: '5분 요약',
+    title: '초기 치매 및 경도인지장애 어르신을 위한 뇌 활성화 인지 재활 프로그램',
+    category: 'nursing',
+    categoryName: '어르신 요양케어',
+    readTime: '4분 요약',
     featured: false,
-    views: '1,450',
-    likes: 98,
-    summary: '빅테크 기업들의 자체 실리콘 칩 개발 현황과 데이터센터 전력 소비 효율화 기술을 종합 분석합니다.',
+    views: '2,510',
+    likes: 176,
+    summary: '기억력 감퇴를 늦추는 미술치료, 음악회상요법, 디지털 인지훈련 기기의 실제 주간보호센터 도입 효과와 보호자 응대 요령.',
     bullets: [
-      '엔비디아 B200 풀 가동 및 차세대 HBM4 공급망 분석',
-      '빅테크 4사의 자체 AI 가속기(TPU, Trainium) 도입 비율 40% 돌파',
-      '액침 냉각(Immersion Cooling) 기술의 데이터센터 표준화'
+      '과거의 즐거운 기억을 되살리는 회상치료의 임상적 우울증 감소 효과',
+      '손가락 소근육을 자극하는 컬러링 및 원예 치료 실천법',
+      '보호자가 알아두어야 할 치매 초기 단계별 의사소통 가이드'
     ],
     content: {
-      tldr: '하드웨어 병목이 연산 성능에서 데이터센터 전력과 쿨링 인프라로 이동하고 있습니다.',
+      tldr: '주간보호센터에서의 규칙적인 사회적 교류와 인지 활동이 어르신의 치매 진행 속도를 현저히 늦춥니다.',
       sections: [
         {
-          heading: '반도체 공급망과 전력 인프라의 격변',
-          text: 'AI 모델의 추론 수요가 급증함에 따라 데이터센터의 전력 소모와 열 관리가 핵심 기술 과제로 부상했습니다.'
+          heading: '전문 인지 재활의 중요성',
+          text: '어르신이 하루 중 또래 친구들과 대화하고 웃으며 참여하는 인지 놀이가 최고의 뇌 영양제 역할을 합니다.'
         }
       ],
       sources: [
-        { name: 'TechCrunch Semiconductor Review', url: 'https://techcrunch.com' }
+        { name: '대한노인신경의학회', url: 'https://www.neurogeriatry.or.kr' }
       ]
     }
   },
@@ -111,29 +111,59 @@ export const newsletters = [
     id: 'issue-39',
     issueNumber: 39,
     date: '2026-08-12',
-    title: '심층 추론(Deep Reasoning) 메커니즘을 규명한 최신 MIT 리서치 리뷰',
-    category: 'research',
-    categoryName: '논문 & 리서치',
-    readTime: '4분 요약',
+    title: '어르신 혈압·혈당 관리와 여름철/환절기 면역력 맞춤 영양 식단표',
+    category: 'health',
+    categoryName: '건강 관리법',
+    readTime: '3분 요약',
     featured: false,
-    views: '1,120',
-    likes: 87,
-    summary: 'LLM이 CoT(Chain-of-Thought) 과정에서 어떻게 논리적 비약을 방지하는지에 대한 기계적 해석 가능성(Interpretability) 분석.',
+    views: '1,980',
+    likes: 142,
+    summary: '소화 흡수가 잘되는 고단백 연식 조리법, 탈수 예방을 위한 시간대별 수분 섭취 루틴 및 영양사 추천 시니어 건강 식단.',
     bullets: [
-      '트랜스포머 레이어 내부의 추론 헤드(Reasoning Head) 활성화 패턴 시각화',
-      '환각(Hallucination) 현상을 사전에 85% 감지하는 임베딩 엔트로피 기법',
-      '경량 모델에서도 심층 추론을 가능케 하는 지식 증류(Distillation) 방법론'
+      '단백질 부족을 예방하는 부드러운 두부·달걀·생선 식단 구성법',
+      '어르신 갈증 감각 저하에 대비한 2시간 간격 미온수 음용법',
+      '혈압 변동이 심한 아침 기상 시 주의해야 할 3가지 행동'
     ],
     content: {
-      tldr: '블랙박스로 여겨지던 LLM 내부의 추론 회로가 점차 밝혀지고 있습니다.',
+      tldr: '규칙적인 수분 섭취와 균형 잡힌 저염 고단백 식단이 어르신 활력 유지의 핵심입니다.',
       sections: [
         {
-          heading: '해석 가능성 연구의 획기적 진전',
-          text: '신경망 내부의 특징 맵(Feature Map)을 분해하여 특정 거짓 답변이 생성되는 경로를 사전에 차단하는 연구가 활발합니다.'
+          heading: '시니어 맞춤 영양 케어',
+          text: '씹기 편하고 소화가 쉬운 조리법과 함께 비타민 D와 칼슘이 풍부한 식사를 제공하는 것이 중요합니다.'
         }
       ],
       sources: [
-        { name: 'MIT CSAIL Archive', url: 'https://csail.mit.edu' }
+        { name: '한국임상영양학회', url: 'https://www.kclinnutr.org' }
+      ]
+    }
+  },
+  {
+    id: 'issue-38',
+    issueNumber: 38,
+    date: '2026-08-10',
+    title: '노인장기요양 등급 신청부터 등급 판정까지: 보호자가 꼭 알아야 할 5단계 절차',
+    category: 'info',
+    categoryName: '노인정보 관리',
+    readTime: '5분 요약',
+    featured: false,
+    views: '4,120',
+    likes: 310,
+    summary: '의사소견서 발급, 공단 직원 방문 조사 시 어르신 일상수행능력(ADL) 평가 문항 답변 요령 및 이의신청 방법 완전 해설.',
+    bullets: [
+      '신청서 제출 ➔ 방문 조사 ➔ 의사소견서 ➔ 등급판정위원회 5단계',
+      '공단 방문조사관 실사 시 자주 실수하는 답변 3가지',
+      '등급 미부여(인지지원등급) 시 주간보호센터 이용 혜택 안내'
+    ],
+    content: {
+      tldr: '등급 신청 시 어르신의 평소 가장 힘들어하시는 상태를 정확하게 기록하고 전달하는 것이 핵심입니다.',
+      sections: [
+        {
+          heading: '방문조사 대비 꿀팁',
+          text: '어르신이 조사관 앞에서는 평소보다 무리해서 잘하시는 경향이 있으므로, 보호자가 평소 보행 상태, 배설, 옷 입기 등의 어려움을 차분히 설명하는 것이 중요합니다.'
+        }
+      ],
+      sources: [
+        { name: '국민건강보험공단', url: 'https://www.nhis.or.kr' }
       ]
     }
   }

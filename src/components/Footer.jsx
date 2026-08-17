@@ -1,7 +1,7 @@
 import React from 'react';
 import { HeartPulse, ArrowUp, Database } from 'lucide-react';
 
-export default function Footer({ currentUser, onSubscribeClick, onOpenAdmin }) {
+export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin }) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -28,19 +28,20 @@ export default function Footer({ currentUser, onSubscribeClick, onOpenAdmin }) {
           <div className="footer-col">
             <h5>카테고리</h5>
             <ul className="footer-links">
-              <li><a href="#archive">LLM & 파운데이션 모델</a></li>
-              <li><a href="#archive">오픈소스 AI & 개발툴</a></li>
-              <li><a href="#archive">글로벌 테크 비즈니스</a></li>
-              <li><a href="#archive">최신 AI 리서치 논문</a></li>
+              <li><a href="#archive">어르신 돌봄</a></li>
+              <li><a href="#archive">어르신 요양케어</a></li>
+              <li><a href="#archive">노인정보 관리</a></li>
+              <li><a href="#archive">건강 관리법</a></li>
+              <li><a href="#archive">복지정책</a></li>
             </ul>
           </div>
 
           <div className="footer-col">
             <h5>서비스 & 소개</h5>
             <ul className="footer-links">
-              <li><a href="#about">11재활통합주간보호 소개</a></li>
-              <li><a href="#about">센터 원장 소개</a></li>
-              <li><a href="#" onClick={(e) => { e.preventDefault(); onSubscribeClick(); }}>무료 등급 신청 상담</a></li>
+              <li><a href="#aboutcenter">11재활통합주간보호 소개</a></li>
+              <li><a href="#aboutceo">센터 원장 소개</a></li>
+              <li><a href="#" onClick={(e) => { e.preventDefault(); onOpenConsultModal(); }}>무료 등급 신청 상담</a></li>
               {isAdmin && (
                 <li style={{ marginTop: '8px', paddingTop: '8px', borderTop: '1px dashed var(--border-subtle)' }}>
                   <button

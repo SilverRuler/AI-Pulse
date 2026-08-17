@@ -5,8 +5,11 @@ import FeaturedIssue from './components/FeaturedIssue';
 import ArchiveFeed from './components/ArchiveFeed';
 import ReaderModal from './components/ReaderModal';
 import SubscribeModal from './components/SubscribeModal';
+import ConsultModal from './components/ConsultModal';
 import AuthModal from './components/AuthModal';
 import AdminModal from './components/AdminModal';
+import AboutCenter from './components/AboutCenter';
+import AboutCeo from './components/AboutCeo';
 import Footer from './components/Footer';
 import { newsletters } from './data/newsletters';
 
@@ -17,12 +20,34 @@ export default function App() {
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [subscribedEmail, setSubscribedEmail] = useState('');
   
-  // Auth modal state
+  // Page view state: 'home' | 'aboutcenter' | 'aboutceo'
+  const [currentView, setCurrentView] = useState('home');
+
+  // Modal states
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'signup'
-
-  // Admin DB modal state
+  const [isConsultModalOpen, setIsConsultModalOpen] = useState(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+
+  // Hash-based view synchronization
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash === '#aboutcenter') {
+        setCurrentView('aboutcenter');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (hash === '#aboutceo') {
+        setCurrentView('aboutceo');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        setCurrentView('home');
+      }
+    };
+
+    handleHashChange();
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -39,6 +64,12 @@ export default function App() {
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const handleGoHome = () => {
+    window.location.hash = '';
+    setCurrentView('home');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenAuth = (mode = 'login') => {
@@ -72,6 +103,10 @@ export default function App() {
     setIsSubscribeModalOpen(true);
   };
 
+  const handleOpenConsultModal = () => {
+    setIsConsultModalOpen(true);
+  };
+
   const handleShare = (issue) => {
     if (navigator.share) {
       navigator.share({
@@ -95,21 +130,37 @@ export default function App() {
         currentUser={currentUser}
         onOpenAuth={handleOpenAuth}
         onLogout={handleLogout}
+        onGoHome={handleGoHome}
       />
 
       <main>
-        <Hero
-          currentUser={currentUser}
-          onOpenAuth={handleOpenAuth}
-          onSubscribeSuccess={handleHeroSubscribeSuccess}
-        />
-        <FeaturedIssue issue={featuredIssue} onOpenReader={setSelectedIssue} />
-        <ArchiveFeed newsletters={newsletters} onOpenReader={setSelectedIssue} />
+        {currentView === 'aboutcenter' ? (
+          <AboutCenter
+            onGoHome={handleGoHome}
+            onOpenConsultModal={handleOpenConsultModal}
+          />
+        ) : currentView === 'aboutceo' ? (
+          <AboutCeo
+            onGoHome={handleGoHome}
+            onOpenConsultModal={handleOpenConsultModal}
+          />
+        ) : (
+          <>
+            <Hero
+              currentUser={currentUser}
+              onOpenAuth={handleOpenAuth}
+              onSubscribeSuccess={handleHeroSubscribeSuccess}
+            />
+            <FeaturedIssue issue={featuredIssue} onOpenReader={setSelectedIssue} />
+            <ArchiveFeed newsletters={newsletters} onOpenReader={setSelectedIssue} />
+          </>
+        )}
       </main>
 
       <Footer
         currentUser={currentUser}
         onSubscribeClick={handleOpenSubscribeModal}
+        onOpenConsultModal={handleOpenConsultModal}
         onOpenAdmin={() => setIsAdminModalOpen(true)}
       />
 
@@ -127,6 +178,14 @@ export default function App() {
         subscribedEmail={subscribedEmail}
       />
 
+      {/* Free Care Grade Consultation Modal */}
+      <ConsultModal
+        isOpen={isConsultModalOpen}
+        onClose={() => setIsConsultModalOpen(false)}
+        currentUser={currentUser}
+        onOpenAuth={handleOpenAuth}
+      />
+
       {/* Auth Modal (Login / Signup with 3-Level Address Dropdowns) */}
       <AuthModal
         isOpen={isAuthModalOpen}
@@ -135,7 +194,7 @@ export default function App() {
         initialMode={authInitialMode}
       />
 
-      {/* Admin SQLite DB Console Modal */}
+      {/* Admin Redis DB Console Modal */}
       <AdminModal
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
