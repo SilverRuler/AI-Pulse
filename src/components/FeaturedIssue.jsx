@@ -1,8 +1,10 @@
 import React from 'react';
-import { Sparkles, Calendar, Clock, ArrowRight, CheckCircle2, Eye, Heart } from 'lucide-react';
+import { Sparkles, Clock, ArrowRight, CheckCircle2, Eye, Heart } from 'lucide-react';
 
-export default function FeaturedIssue({ issue, onOpenReader }) {
+export default function FeaturedIssue({ issue, onOpenReader, userLikes = [], onToggleLike }) {
   if (!issue) return null;
+
+  const isLiked = userLikes.includes(issue.id);
 
   return (
     <section className="featured-section">
@@ -21,25 +23,51 @@ export default function FeaturedIssue({ issue, onOpenReader }) {
           <div className="featured-header">
             <div className="tag-list">
               <span className="tag accent">🔥 HOT TOPIC</span>
+              <span className="tag">Issue #{issue.issueNumber}</span>
               <span className="tag">{issue.categoryName}</span>
             </div>
             <div className="meta-info">
               <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Clock size={14} /> {issue.readTime}
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }} title="조회수">
                 <Eye size={14} /> {issue.views}
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Heart size={14} style={{ color: '#ec4899' }} /> {issue.likes}
-              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleLike && onToggleLike(issue.id);
+                }}
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  color: isLiked ? '#ec4899' : 'var(--text-muted)',
+                  padding: 0,
+                  fontSize: 'inherit'
+                }}
+                title={isLiked ? '좋아요 취소' : '좋아요'}
+              >
+                <Heart
+                  size={14}
+                  style={{
+                    color: isLiked ? '#ec4899' : 'var(--text-muted)',
+                    fill: isLiked ? '#ec4899' : 'none'
+                  }}
+                />
+                <span>{issue.likes}</span>
+              </button>
             </div>
           </div>
 
           <h2 className="featured-heading">{issue.title}</h2>
 
           <ul className="featured-bullets">
-            {issue.bullets.map((bullet, idx) => (
+            {issue.bullets?.map((bullet, idx) => (
               <li key={idx}>
                 <CheckCircle2 size={18} className="bullet-icon" />
                 <span>{bullet}</span>

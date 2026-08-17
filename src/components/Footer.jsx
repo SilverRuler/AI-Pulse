@@ -1,7 +1,7 @@
 import React from 'react';
 import { HeartPulse, ArrowUp, Database } from 'lucide-react';
 
-export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin }) {
+export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin, onSelectCategory, onSubscribeClick }) {
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -28,11 +28,61 @@ export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin })
           <div className="footer-col">
             <h5>카테고리</h5>
             <ul className="footer-links">
-              <li><a href="#archive">어르신 돌봄</a></li>
-              <li><a href="#archive">어르신 요양케어</a></li>
-              <li><a href="#archive">노인정보 관리</a></li>
-              <li><a href="#archive">건강 관리법</a></li>
-              <li><a href="#archive">복지정책</a></li>
+              <li>
+                <a
+                  href="#archive"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectCategory && onSelectCategory('care');
+                  }}
+                >
+                  어르신 돌봄
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#archive"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectCategory && onSelectCategory('nursing');
+                  }}
+                >
+                  어르신 요양케어
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#archive"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectCategory && onSelectCategory('info');
+                  }}
+                >
+                  노인정보 관리
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#archive"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectCategory && onSelectCategory('health');
+                  }}
+                >
+                  건강 관리법
+                </a>
+              </li>
+              <li>
+                <a
+                  href="#archive"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onSelectCategory && onSelectCategory('policy');
+                  }}
+                >
+                  복지정책
+                </a>
+              </li>
             </ul>
           </div>
 

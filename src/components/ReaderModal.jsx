@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { X, Calendar, Clock, Share2, Heart, ExternalLink, Sparkles, BookOpen } from 'lucide-react';
+import { X, Calendar, Clock, Share2, Heart, Eye, ExternalLink, Sparkles } from 'lucide-react';
 
-export default function ReaderModal({ issue, onClose, onShare }) {
+export default function ReaderModal({ issue, onClose, onShare, userLikes = [], onToggleLike }) {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') onClose();
@@ -11,6 +11,8 @@ export default function ReaderModal({ issue, onClose, onShare }) {
   }, [onClose]);
 
   if (!issue) return null;
+
+  const isLiked = userLikes.includes(issue.id);
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -22,15 +24,42 @@ export default function ReaderModal({ issue, onClose, onShare }) {
             <span className="tag">{issue.categoryName}</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            {/* Like Button */}
+            <button
+              onClick={() => onToggleLike && onToggleLike(issue.id)}
+              className="icon-button"
+              title={isLiked ? '좋아요 취소' : '좋아요'}
+              style={{
+                color: isLiked ? '#ec4899' : 'var(--text-muted)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+                padding: '6px 10px',
+                borderRadius: 'var(--radius-full)',
+                background: isLiked ? 'rgba(236, 72, 153, 0.1)' : 'var(--bg-subtle)'
+              }}
+            >
+              <Heart
+                size={16}
+                style={{
+                  color: isLiked ? '#ec4899' : 'var(--text-muted)',
+                  fill: isLiked ? '#ec4899' : 'none'
+                }}
+              />
+              <span style={{ fontSize: '0.82rem', fontWeight: 700 }}>{issue.likes}</span>
+            </button>
+
+            {/* Share Deep-link Button */}
             <button
               onClick={() => onShare(issue)}
               className="icon-button"
-              title="공유하기"
+              title="이 아티클 공유하기"
             >
               <Share2 size={16} />
             </button>
-            <button onClick={onClose} className="icon-button" title="닫기">
+
+            <button onClick={onClose} className="icon-button" title="닫기" aria-label="Close">
               <X size={18} />
             </button>
           </div>
@@ -49,7 +78,9 @@ export default function ReaderModal({ issue, onClose, onShare }) {
               <Clock size={14} /> {issue.readTime}
             </span>
             <span>•</span>
-            <span>AI Daily Briefing</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <Eye size={14} /> 조회수 {issue.views}
+            </span>
           </div>
 
           {/* AI Executive Summary Callout */}
