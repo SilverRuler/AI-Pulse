@@ -34,7 +34,7 @@ export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDir
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Sparkles size={18} style={{ color: 'var(--accent-primary)' }} />
-            <span style={{ fontWeight: 700 }}>AI Pulse 무료 구독</span>
+            <span style={{ fontWeight: 700 }}>11 DayCare Letter 무료 구독</span>
           </div>
           <button onClick={onClose} className="icon-button">
             <X size={18} />

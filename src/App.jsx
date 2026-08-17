@@ -5,21 +5,56 @@ import FeaturedIssue from './components/FeaturedIssue';
 import ArchiveFeed from './components/ArchiveFeed';
 import ReaderModal from './components/ReaderModal';
 import SubscribeModal from './components/SubscribeModal';
+import AuthModal from './components/AuthModal';
+import AdminModal from './components/AdminModal';
 import Footer from './components/Footer';
 import { newsletters } from './data/newsletters';
 
 export default function App() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
+  const [currentUser, setCurrentUser] = useState(null);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [isSubscribeModalOpen, setIsSubscribeModalOpen] = useState(false);
   const [subscribedEmail, setSubscribedEmail] = useState('');
+  
+  // Auth modal state
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authInitialMode, setAuthInitialMode] = useState('login'); // 'login' | 'signup'
+
+  // Admin DB modal state
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
+    // Load saved user session from localStorage
+    try {
+      const savedUser = localStorage.getItem('11daycare_current_user');
+      if (savedUser) {
+        setCurrentUser(JSON.parse(savedUser));
+      }
+    } catch (e) {
+      console.error(e);
+    }
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
+  const handleOpenAuth = (mode = 'login') => {
+    setAuthInitialMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleAuthSuccess = (user) => {
+    setCurrentUser(user);
+  };
+
+  const handleLogout = () => {
+    if (window.confirm('로그아웃 하시겠습니까?')) {
+      localStorage.removeItem('11daycare_current_user');
+      setCurrentUser(null);
+    }
   };
 
   const handleHeroSubscribeSuccess = (email) => {
@@ -28,6 +63,11 @@ export default function App() {
   };
 
   const handleOpenSubscribeModal = () => {
+    if (!currentUser) {
+      alert('로그인이 필요합니다. 먼저 로그인 또는 회원가입을 진행해 주세요.');
+      handleOpenAuth('login');
+      return;
+    }
     setSubscribedEmail('');
     setIsSubscribeModalOpen(true);
   };
@@ -52,16 +92,26 @@ export default function App() {
       <Navbar
         theme={theme}
         toggleTheme={toggleTheme}
-        onSubscribeClick={handleOpenSubscribeModal}
+        currentUser={currentUser}
+        onOpenAuth={handleOpenAuth}
+        onLogout={handleLogout}
       />
 
       <main>
-        <Hero onSubscribeSuccess={handleHeroSubscribeSuccess} />
+        <Hero
+          currentUser={currentUser}
+          onOpenAuth={handleOpenAuth}
+          onSubscribeSuccess={handleHeroSubscribeSuccess}
+        />
         <FeaturedIssue issue={featuredIssue} onOpenReader={setSelectedIssue} />
         <ArchiveFeed newsletters={newsletters} onOpenReader={setSelectedIssue} />
       </main>
 
-      <Footer onSubscribeClick={handleOpenSubscribeModal} />
+      <Footer
+        currentUser={currentUser}
+        onSubscribeClick={handleOpenSubscribeModal}
+        onOpenAdmin={() => setIsAdminModalOpen(true)}
+      />
 
       {/* Full Article Reader Modal */}
       <ReaderModal
@@ -75,6 +125,20 @@ export default function App() {
         isOpen={isSubscribeModalOpen}
         onClose={() => setIsSubscribeModalOpen(false)}
         subscribedEmail={subscribedEmail}
+      />
+
+      {/* Auth Modal (Login / Signup with 3-Level Address Dropdowns) */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={handleAuthSuccess}
+        initialMode={authInitialMode}
+      />
+
+      {/* Admin SQLite DB Console Modal */}
+      <AdminModal
+        isOpen={isAdminModalOpen}
+        onClose={() => setIsAdminModalOpen(false)}
       />
     </div>
   );
