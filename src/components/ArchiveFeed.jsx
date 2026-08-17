@@ -3,11 +3,11 @@ import { Archive, Clock, Search, Heart, Eye, ArrowRight, ArrowLeft } from 'lucid
 import { categories } from '../data/newsletters';
 
 export default function ArchiveFeed({
-  newsletters,
+  newsletters = [],
   onOpenReader,
   isFullPage = false,
   onGoHome,
-  activeCategory,
+  activeCategory = 'all',
   onSelectCategory,
   userLikes = [],
   onToggleLike
@@ -56,7 +56,7 @@ export default function ArchiveFeed({
 
   // Limit 12 (3x4) on Home page, Full on Archive page
   const displayedNewsletters = isFullPage ? filteredNewsletters : filteredNewsletters.slice(0, 12);
-  const hasMore = !isFullPage && filteredNewsletters.length > 12;
+  const showMoreButton = !isFullPage && (filteredNewsletters.length > 12 || newsletters.length > 12);
 
   return (
     <section id="archive" style={{ marginBottom: isFullPage ? '40px' : '80px', padding: isFullPage ? '40px 0 80px' : '0' }}>
@@ -85,7 +85,7 @@ export default function ArchiveFeed({
           <div className="section-title">
             <Archive size={20} style={{ color: 'var(--accent-primary)' }} />
             <span>
-              {isFullPage ? `지난 뉴스레터 아카이브 전체보기 (총 ${newsletters.length}개)` : '지난 뉴스레터 아카이브'}
+              {isFullPage ? `지난 뉴스레터 아카이브 전체보기 (총 ${newsletters.length}개 발행됨)` : '지난 뉴스레터 아카이브'}
             </span>
           </div>
 
@@ -190,30 +190,33 @@ export default function ArchiveFeed({
           )}
         </div>
 
-        {/* Load More Button on Home page if more than 12 articles */}
-        {hasMore && (
-          <div style={{ textAlign: 'center', marginTop: '36px' }}>
-            <a
-              href="#archive"
-              onClick={(e) => {
-                e.preventDefault();
+        {/* Load More Button on Home page */}
+        {showMoreButton && (
+          <div style={{ textAlign: 'center', marginTop: '40px' }}>
+            <button
+              onClick={() => {
                 window.location.hash = '#archive';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="btn-primary"
               style={{
-                padding: '12px 28px',
-                fontSize: '0.95rem',
+                padding: '14px 32px',
+                fontSize: '0.98rem',
                 background: 'var(--bg-card)',
                 color: 'var(--text-primary)',
-                border: '1px solid var(--border-active)',
+                border: '2px solid var(--accent-primary)',
+                boxShadow: '0 4px 14px rgba(79, 70, 229, 0.12)',
+                borderRadius: 'var(--radius-full)',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px'
+                gap: '10px',
+                cursor: 'pointer',
+                fontWeight: 700
               }}
             >
-              <span>더 많은 지난 뉴스레터 전체보기 (+{filteredNewsletters.length - 12}개 더보기)</span>
-              <ArrowRight size={16} style={{ color: 'var(--accent-primary)' }} />
-            </a>
+              <span>지난 뉴스레터 아카이브 전체보기 (총 {newsletters.length}개 모두보기)</span>
+              <ArrowRight size={18} style={{ color: 'var(--accent-primary)' }} />
+            </button>
           </div>
         )}
       </div>

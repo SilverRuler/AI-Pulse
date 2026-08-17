@@ -14,7 +14,17 @@ export default function Navbar({ theme, toggleTheme, currentUser, onOpenAuth, on
         </a>
 
         <div className="nav-actions">
-          <a href="#archive" className="nav-link">지난 뉴스레터</a>
+          <a
+            href="#archive"
+            onClick={(e) => {
+              e.preventDefault();
+              window.location.hash = '#archive';
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            className="nav-link"
+          >
+            지난 뉴스레터
+          </a>
           <a href="#about" className="nav-link">소개</a>
 
           <button
