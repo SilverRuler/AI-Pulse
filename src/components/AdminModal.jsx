@@ -44,8 +44,8 @@ export default function AdminModal({ isOpen, onClose }) {
         <div className="modal-header">
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Database size={18} style={{ color: 'var(--accent-primary)' }} />
-            <span style={{ fontWeight: 700 }}>운영자 SQLite DB 관리자 콘솔</span>
-            <span className="tag accent" style={{ fontSize: '0.75rem' }}>Local Server DB</span>
+            <span style={{ fontWeight: 700 }}>운영자 Redis DB 관리자 콘솔</span>
+            <span className="tag accent" style={{ fontSize: '0.75rem' }}>Upstash Server DB</span>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -87,7 +87,7 @@ export default function AdminModal({ isOpen, onClose }) {
             /* ================= USERS TABLE ================= */
             <div>
               <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                📁 저장 경로: <code>/root/ai-newsletter-web/data/database.sqlite</code> (users 테이블)
+                ⚡ 데이터베이스: <strong>Upstash Cloud Redis</strong> (Key: <code>user:&#123;id&#125;</code>, <code>users:list</code>)
               </p>
               {users.length === 0 ? (
                 <div style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>
@@ -130,7 +130,7 @@ export default function AdminModal({ isOpen, onClose }) {
             /* ================= SUBSCRIPTIONS TABLE ================= */
             <div>
               <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '12px' }}>
-                📁 저장 경로: <code>/root/ai-newsletter-web/data/database.sqlite</code> (subscriptions 테이블)
+                ⚡ 데이터베이스: <strong>Upstash Cloud Redis</strong> (Key: <code>subscribers:list</code>)
               </p>
               {subscriptions.length === 0 ? (
                 <div style={{ padding: '30px', textAlign: 'center', color: 'var(--text-muted)', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)' }}>

@@ -60,7 +60,7 @@ export default function Footer({ currentUser, onSubscribeClick, onOpenAdmin }) {
                     }}
                   >
                     <Database size={14} />
-                    <span>🛠️ 운영자 DB 콘솔 (SQLite)</span>
+                    <span>🛠️ 운영자 DB 콘솔 (Redis)</span>
                   </button>
                 </li>
               )}
