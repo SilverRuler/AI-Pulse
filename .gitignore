@@ -14,7 +14,7 @@ dist-ssr
 *.local
 
 # SQLite Database & User Sensitive Data (IMPORTANT)
-data/
+/data/
 *.sqlite
 *.sqlite3
 *.db
