@@ -29,59 +29,19 @@ export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin, o
             <h5>카테고리</h5>
             <ul className="footer-links">
               <li>
-                <a
-                  href="#archive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSelectCategory && onSelectCategory('care');
-                  }}
-                >
-                  어르신 돌봄
-                </a>
+                <a href="#archive-care">어르신 돌봄</a>
               </li>
               <li>
-                <a
-                  href="#archive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSelectCategory && onSelectCategory('nursing');
-                  }}
-                >
-                  어르신 요양케어
-                </a>
+                <a href="#archive-nursing">어르신 요양케어</a>
               </li>
               <li>
-                <a
-                  href="#archive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSelectCategory && onSelectCategory('info');
-                  }}
-                >
-                  노인정보 관리
-                </a>
+                <a href="#archive-info">노인정보 관리</a>
               </li>
               <li>
-                <a
-                  href="#archive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSelectCategory && onSelectCategory('health');
-                  }}
-                >
-                  건강 관리법
-                </a>
+                <a href="#archive-health">건강 관리법</a>
               </li>
               <li>
-                <a
-                  href="#archive"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onSelectCategory && onSelectCategory('policy');
-                  }}
-                >
-                  복지정책
-                </a>
+                <a href="#archive-policy">복지정책</a>
               </li>
             </ul>
           </div>

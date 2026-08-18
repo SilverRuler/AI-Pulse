@@ -7,12 +7,13 @@ export default function ArchiveFeed({
   onOpenReader,
   isFullPage = false,
   onGoHome,
+  initialCategory = 'all',
   userLikes = [],
   onToggleLike
 }) {
-  // ArchiveFeed manages its OWN category state internally.
-  // No dependency on parent for filtering -- avoids sync bugs entirely.
-  const [selectedTab, setSelectedTab] = useState('all');
+  // initialCategory comes from URL hash (e.g. #archive-care → 'care')
+  // It is only read once on mount via useState initializer
+  const [selectedTab, setSelectedTab] = useState(initialCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Filter strictly by item.category field

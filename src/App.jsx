@@ -47,6 +47,7 @@ export default function App() {
   const [userLikes, setUserLikes] = useState([]);
   const [selectedIssue, setSelectedIssue] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [initialArchiveCategory, setInitialArchiveCategory] = useState('all');
 
   // Page view state: 'home' | 'aboutcenter' | 'aboutceo' | 'archive'
   const [currentView, setCurrentView] = useState('home');
@@ -102,6 +103,13 @@ export default function App() {
         setSelectedIssue(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } else if (hash === '#archive') {
+        setInitialArchiveCategory('all');
+        setCurrentView('archive');
+        setSelectedIssue(null);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (hash.startsWith('#archive-')) {
+        const cat = hash.replace('#archive-', '');
+        setInitialArchiveCategory(cat);
         setCurrentView('archive');
         setSelectedIssue(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -297,8 +305,7 @@ export default function App() {
             onOpenReader={handleOpenReader}
             isFullPage={true}
             onGoHome={handleGoHome}
-            activeCategory={selectedCategory}
-            onSelectCategory={setSelectedCategory}
+            initialCategory={initialArchiveCategory}
             userLikes={userLikes}
             onToggleLike={handleToggleLike}
           />
