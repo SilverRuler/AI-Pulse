@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userId, userPhone, applicantName, replyEmail } = req.body || {};
+    const { userId, userPhone, userAddress, applicantName, replyEmail } = req.body || {};
 
     if (!applicantName || !replyEmail) {
       return res.status(400).json({ success: false, error: '이름과 이메일을 모두 입력해 주세요.' });
@@ -34,6 +34,7 @@ export default async function handler(req, res) {
           <ul style="list-style: none; padding: 0; margin: 0; font-size: 15px; line-height: 1.8;">
             <li><strong>신청자 아이디:</strong> ${userId || '알 수 없음'}</li>
             <li><strong>신청자 연락처:</strong> ${userPhone || '알 수 없음'}</li>
+            <li><strong>신청자 주소지:</strong> ${userAddress || '등록된 주소 없음'}</li>
             <li><strong>신청자 이름:</strong> ${applicantName}</li>
             <li><strong>회신받을 이메일:</strong> ${replyEmail}</li>
           </ul>

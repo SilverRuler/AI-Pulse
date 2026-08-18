@@ -25,6 +25,8 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
     const confirmed = window.confirm('센터 원장님에게 상담 요청 메일을 보내시겠습니까?');
     if (!confirmed) return;
 
+    const fullAddress = [currentUser.sido, currentUser.sigungu, currentUser.dong, currentUser.address].filter(Boolean).join(' ');
+
     setIsLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/consult`, {
@@ -33,6 +35,7 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
         body: JSON.stringify({
           userId: currentUser.id,
           userPhone: currentUser.phone,
+          userAddress: fullAddress,
           applicantName,
           replyEmail
         })
