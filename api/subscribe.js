@@ -28,7 +28,17 @@ export default async function handler(req, res) {
       return res.status(500).json({ success: false, error: 'Redis connection missing' });
     }
 
-    // 1. Store subscriber
+    // 1. Check for duplicate subscriber
+    const existingList = await redis.lrange('subscribers:list', 0, -1);
+    const alreadySubscribed = existingList.some(item => {
+      try { return JSON.parse(item).email === email; } catch { return false; }
+    });
+
+    if (alreadySubscribed) {
+      return res.status(200).json({ success: false, alreadySubscribed: true, message: '이미 구독 중인 이메일입니다.' });
+    }
+
+    // 2. Store subscriber
     const now = new Date().toISOString();
     const subRecord = {
       email,
@@ -37,7 +47,6 @@ export default async function handler(req, res) {
       createdAt: now
     };
     
-    // Check if already subscribed (optional logic, skipping for brevity, we push anyway)
     await redis.lpush('subscribers:list', JSON.stringify(subRecord));
     console.log(`[Upstash Redis] New subscriber: ${email}`);
 
