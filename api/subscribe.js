@@ -29,10 +29,14 @@ export default async function handler(req, res) {
     }
 
     // 1. Check for duplicate subscriber
+    // Note: @upstash/redis auto-parses JSON, so items may be objects, not strings
     const existingList = await redis.lrange('subscribers:list', 0, -1);
-    const alreadySubscribed = existingList.some(item => {
-      try { return JSON.parse(item).email === email; } catch { return false; }
-    });
+    const getEmail = (item) => {
+      if (!item) return null;
+      if (typeof item === 'object') return item.email || null;
+      try { return JSON.parse(item).email; } catch { return null; }
+    };
+    const alreadySubscribed = existingList.some(item => getEmail(item) === email);
 
     if (alreadySubscribed) {
       return res.status(200).json({ success: false, alreadySubscribed: true, message: '이미 구독 중인 이메일입니다.' });

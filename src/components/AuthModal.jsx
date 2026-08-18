@@ -241,6 +241,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                   <input
                     type="password"
                     required
+                    autoComplete="current-password"
                     value={loginPw}
                     onChange={(e) => setLoginPw(e.target.value)}
                     placeholder="비밀번호를 입력하세요"
@@ -316,6 +317,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                   <input
                     type="password"
                     required
+                    autoComplete="new-password"
                     value={signupPw}
                     onChange={(e) => setSignupPw(e.target.value)}
                     placeholder="4자리 이상"
@@ -338,6 +340,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                   <input
                     type="password"
                     required
+                    autoComplete="new-password"
                     value={signupPwConfirm}
                     onChange={(e) => setSignupPwConfirm(e.target.value)}
                     placeholder="비밀번호 재입력"
