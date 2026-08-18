@@ -62,7 +62,7 @@ export default function Hero({ currentUser, onOpenAuth, onSubscribeSuccess }) {
 
         <h1 className="hero-title">
           매일 아침 8시, <br />
-          <span className="gradient-text">AI 핵심 건강 뉴스</span>를 3분 요약으로.
+          <span className="gradient-text">AI 핵심 건강 뉴스</span>를 1분 요약으로.
         </h1>
 
         <p className="hero-desc">

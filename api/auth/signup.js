@@ -15,9 +15,9 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { id, pw, phone, address, sido, sigungu, dong, hasCareGrade } = req.body || {};
+    const { id, pw, phone, birthDate, address, sido, sigungu, dong, hasCareGrade } = req.body || {};
 
-    if (!id || !pw || !phone || !address) {
+    if (!id || !pw || !phone || !address || !birthDate) {
       return res.status(400).json({ success: false, error: '모든 필수 항목을 입력해 주세요.' });
     }
 
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
       id,
       pw,
       phone,
+      birthDate,
       address,
       sido: sido || '',
       sigungu: sigungu || '',
@@ -53,6 +54,7 @@ export default async function handler(req, res) {
       user: {
         id,
         phone,
+        birthDate,
         address,
         sido,
         sigungu,

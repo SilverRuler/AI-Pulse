@@ -16,13 +16,23 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
   const [signupId, setSignupId] = useState('');
   const [signupPw, setSignupPw] = useState('');
   const [signupPwConfirm, setSignupPwConfirm] = useState('');
+  const [birthYear, setBirthYear] = useState('');
+  const [birthMonth, setBirthMonth] = useState('');
+  const [birthDay, setBirthDay] = useState('');
   const [phone, setPhone] = useState('010-');
+  const [phoneCheckStatus, setPhoneCheckStatus] = useState('idle'); // 'idle' | 'loading' | 'available' | 'duplicate'
   const [sido, setSido] = useState('경기도');
   const [sigungu, setSigungu] = useState('시흥시');
   const [dong, setDong] = useState('정왕동');
   const [hasCareGrade, setHasCareGrade] = useState('yes'); // 'yes' | 'no'
   const [signupError, setSignupError] = useState('');
   const [signupSuccess, setSignupSuccess] = useState(false);
+
+  // Generate birth options
+  const years = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i);
+  const months = Array.from({ length: 12 }, (_, i) => i + 1);
+  const getDaysInMonth = (y, m) => new Date(y || 2000, m || 1, 0).getDate();
+  const days = Array.from({ length: getDaysInMonth(birthYear, birthMonth) }, (_, i) => i + 1);
 
   useEffect(() => {
     setMode(initialMode);
@@ -64,6 +74,37 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
       formatted = `${raw.slice(0, 3)}-${raw.slice(3, 7)}-${raw.slice(7, 11)}`;
     }
     setPhone(formatted);
+    setPhoneCheckStatus('idle');
+  };
+
+  const handlePhoneCheck = async () => {
+    if (phone.replace(/[^0-9]/g, '').length < 10) {
+      alert('올바른 휴대폰 번호를 입력해 주세요.');
+      return;
+    }
+    setPhoneCheckStatus('loading');
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/check-phone`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ phone })
+      });
+      const data = await res.json();
+      if (data.success) {
+        if (data.isDuplicate) {
+          setPhoneCheckStatus('duplicate');
+        } else {
+          setPhoneCheckStatus('available');
+        }
+      } else {
+        alert(data.error || '중복 확인 중 오류가 발생했습니다.');
+        setPhoneCheckStatus('idle');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('네트워크 오류가 발생했습니다.');
+      setPhoneCheckStatus('idle');
+    }
   };
 
   // Real Server SQLite Login handler
@@ -117,8 +158,16 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
       setSignupError('비밀번호와 비밀번호 확인이 일치하지 않습니다.');
       return;
     }
+    if (!birthYear || !birthMonth || !birthDay) {
+      setSignupError('생년월일을 모두 선택해 주세요.');
+      return;
+    }
     if (phone.replace(/[^0-9]/g, '').length < 10) {
       setSignupError('올바른 휴대폰 번호를 입력해 주세요.');
+      return;
+    }
+    if (phoneCheckStatus !== 'available') {
+      setSignupError('휴대폰 번호 중복 확인을 완료해 주세요.');
       return;
     }
     if (!sido || !sigungu || !dong) {
@@ -135,6 +184,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
           id: signupId,
           pw: signupPw,
           phone: phone,
+          birthDate: `${birthYear}-${String(birthMonth).padStart(2, '0')}-${String(birthDay).padStart(2, '0')}`,
           address: `${sido} ${sigungu} ${dong}`,
           sido,
           sigungu,
@@ -361,23 +411,18 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                 </div>
               </div>
 
-              {/* Phone */}
+              {/* Birthdate */}
               <div style={{ marginBottom: '12px' }}>
                 <label style={{ display: 'block', fontSize: '0.83rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                  휴대폰 번호 <span style={{ color: '#ef4444' }}>*</span>
+                  생년월일 <span style={{ color: '#ef4444' }}>*</span>
                 </label>
-                <div style={{ position: 'relative' }}>
-                  <Phone size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                  <input
-                    type="tel"
+                <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr 1fr', gap: '8px' }}>
+                  <select
+                    value={birthYear}
+                    onChange={(e) => setBirthYear(e.target.value)}
                     required
-                    value={phone}
-                    onChange={handlePhoneChange}
-                    maxLength={13}
-                    placeholder="010-XXXX-XXXX"
                     style={{
-                      width: '100%',
-                      padding: '9px 12px 9px 34px',
+                      padding: '9px 8px',
                       background: 'var(--bg-subtle)',
                       border: '1px solid var(--border-subtle)',
                       borderRadius: 'var(--radius-sm)',
@@ -385,8 +430,100 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                       fontSize: '0.9rem',
                       outline: 'none'
                     }}
-                  />
+                  >
+                    <option value="">년도</option>
+                    {years.map(y => <option key={y} value={y}>{y}년</option>)}
+                  </select>
+                  <select
+                    value={birthMonth}
+                    onChange={(e) => setBirthMonth(e.target.value)}
+                    required
+                    style={{
+                      padding: '9px 8px',
+                      background: 'var(--bg-subtle)',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: 'var(--radius-sm)',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.9rem',
+                      outline: 'none'
+                    }}
+                  >
+                    <option value="">월</option>
+                    {months.map(m => <option key={m} value={m}>{m}월</option>)}
+                  </select>
+                  <select
+                    value={birthDay}
+                    onChange={(e) => setBirthDay(e.target.value)}
+                    required
+                    style={{
+                      padding: '9px 8px',
+                      background: 'var(--bg-subtle)',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: 'var(--radius-sm)',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.9rem',
+                      outline: 'none'
+                    }}
+                  >
+                    <option value="">일</option>
+                    {days.map(d => <option key={d} value={d}>{d}일</option>)}
+                  </select>
                 </div>
+              </div>
+
+              {/* Phone */}
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ display: 'block', fontSize: '0.83rem', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                  휴대폰 번호 <span style={{ color: '#ef4444' }}>*</span>
+                </label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <div style={{ position: 'relative', flex: 1 }}>
+                    <Phone size={15} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                    <input
+                      type="tel"
+                      required
+                      value={phone}
+                      onChange={handlePhoneChange}
+                      maxLength={13}
+                      placeholder="010-XXXX-XXXX"
+                      style={{
+                        width: '100%',
+                        padding: '9px 12px 9px 34px',
+                        background: 'var(--bg-subtle)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: 'var(--radius-sm)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.9rem',
+                        outline: 'none'
+                      }}
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePhoneCheck}
+                    disabled={phone.replace(/[^0-9]/g, '').length < 10 || phoneCheckStatus === 'loading'}
+                    style={{
+                      padding: '0 12px',
+                      background: phoneCheckStatus === 'available' ? 'var(--accent-success)' : 'var(--bg-primary)',
+                      color: phoneCheckStatus === 'available' ? '#fff' : 'var(--text-primary)',
+                      border: `1px solid ${phoneCheckStatus === 'available' ? 'var(--accent-success)' : 'var(--border-subtle)'}`,
+                      borderRadius: 'var(--radius-sm)',
+                      fontSize: '0.85rem',
+                      fontWeight: 600,
+                      cursor: phone.replace(/[^0-9]/g, '').length < 10 ? 'not-allowed' : 'pointer',
+                      opacity: phone.replace(/[^0-9]/g, '').length < 10 ? 0.5 : 1,
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {phoneCheckStatus === 'loading' ? '확인 중...' : phoneCheckStatus === 'available' ? '확인완료' : '중복확인'}
+                  </button>
+                </div>
+                {phoneCheckStatus === 'duplicate' && (
+                  <p style={{ color: '#ef4444', fontSize: '0.8rem', marginTop: '4px' }}>이미 가입된 휴대폰 번호입니다.</p>
+                )}
+                {phoneCheckStatus === 'available' && (
+                  <p style={{ color: 'var(--accent-success)', fontSize: '0.8rem', marginTop: '4px' }}>가입 가능한 휴대폰 번호입니다.</p>
+                )}
               </div>
 
               {/* 3-Level Address Dropdowns */}
