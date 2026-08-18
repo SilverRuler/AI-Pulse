@@ -12,18 +12,11 @@ export default function ArchiveFeed({
   userLikes = [],
   onToggleLike
 }) {
-  const [currentCategory, setCurrentCategory] = useState(activeCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Sync when parent activeCategory changes (e.g. from footer click)
-  useEffect(() => {
-    if (activeCategory) {
-      setCurrentCategory(activeCategory);
-    }
-  }, [activeCategory]);
+  const currentCategory = activeCategory || 'all';
 
   const handleTabClick = (catId) => {
-    setCurrentCategory(catId);
     if (onSelectCategory) {
       onSelectCategory(catId);
     }
@@ -161,24 +154,38 @@ export default function ArchiveFeed({
                           background: 'transparent',
                           border: 'none',
                           cursor: 'pointer',
-                          display: 'flex',
+                          position: 'relative',
+                          display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '4px',
-                          color: isLiked ? '#ef4444' : 'var(--text-muted)',
-                          padding: 0,
-                          fontSize: 'inherit'
+                          justifyContent: 'center',
+                          padding: '2px',
                         }}
                         title={isLiked ? '좋아요 취소' : '좋아요'}
                       >
                         <Heart
-                          size={13}
+                          size={24}
                           style={{
-                            color: isLiked ? '#ef4444' : '#ef4444',
-                            fill: isLiked ? '#ef4444' : 'none',
-                            stroke: '#ef4444'
+                            color: '#ef4444',
+                            fill: isLiked ? '#ef4444' : 'rgba(239, 68, 68, 0.1)',
+                            stroke: '#ef4444',
+                            strokeWidth: 1.5,
                           }}
                         />
-                        <span>{item.likes}</span>
+                        <span
+                          style={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
+                            fontSize: '0.6rem',
+                            fontWeight: 800,
+                            color: isLiked ? '#ffffff' : '#ef4444',
+                            pointerEvents: 'none',
+                            marginTop: '-1px'
+                          }}
+                        >
+                          {item.likes > 99 ? '99+' : item.likes}
+                        </span>
                       </button>
                     </div>
                   </div>

@@ -25,33 +25,46 @@ export default function ReaderModal({ issue, onClose, onShare, userLikes = [], o
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Like Button with Red Heart */}
+            {/* Like Button with Red Heart containing Number */}
             <button
               onClick={() => onToggleLike && onToggleLike(issue.id)}
               className="icon-button"
               title={isLiked ? '좋아요 취소' : '좋아요'}
               style={{
-                color: '#ef4444',
+                position: 'relative',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
-                padding: '6px 12px',
-                borderRadius: 'var(--radius-full)',
-                background: isLiked ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-subtle)',
-                border: isLiked ? '1px solid #ef4444' : '1px solid var(--border-subtle)',
+                justifyContent: 'center',
+                background: 'transparent',
+                border: 'none',
                 cursor: 'pointer',
-                fontWeight: 700
+                padding: '4px',
               }}
             >
               <Heart
-                size={16}
+                size={36}
                 style={{
                   color: '#ef4444',
-                  fill: isLiked ? '#ef4444' : 'none',
-                  stroke: '#ef4444'
+                  fill: isLiked ? '#ef4444' : 'rgba(239, 68, 68, 0.1)',
+                  stroke: '#ef4444',
+                  strokeWidth: 1.5,
                 }}
               />
-              <span style={{ fontSize: '0.85rem' }}>{issue.likes}</span>
+              <span
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  fontSize: '0.75rem',
+                  fontWeight: 800,
+                  color: isLiked ? '#ffffff' : '#ef4444',
+                  pointerEvents: 'none',
+                  marginTop: '-1px'
+                }}
+              >
+                {issue.likes > 99 ? '99+' : issue.likes}
+              </span>
             </button>
 
             {/* Share Deep-link Button */}

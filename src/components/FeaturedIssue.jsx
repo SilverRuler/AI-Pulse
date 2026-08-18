@@ -43,24 +43,38 @@ export default function FeaturedIssue({ issue, onOpenReader, userLikes = [], onT
                   background: 'transparent',
                   border: 'none',
                   cursor: 'pointer',
-                  display: 'flex',
+                  position: 'relative',
+                  display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '4px',
-                  color: isLiked ? '#ef4444' : 'var(--text-muted)',
-                  padding: 0,
-                  fontSize: 'inherit'
+                  justifyContent: 'center',
+                  padding: '2px',
                 }}
                 title={isLiked ? '좋아요 취소' : '좋아요'}
               >
                 <Heart
-                  size={14}
+                  size={26}
                   style={{
                     color: '#ef4444',
-                    fill: isLiked ? '#ef4444' : 'none',
-                    stroke: '#ef4444'
+                    fill: isLiked ? '#ef4444' : 'rgba(239, 68, 68, 0.1)',
+                    stroke: '#ef4444',
+                    strokeWidth: 1.5,
                   }}
                 />
-                <span>{issue.likes}</span>
+                <span
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    fontSize: '0.65rem',
+                    fontWeight: 800,
+                    color: isLiked ? '#ffffff' : '#ef4444',
+                    pointerEvents: 'none',
+                    marginTop: '-1px'
+                  }}
+                >
+                  {issue.likes > 99 ? '99+' : issue.likes}
+                </span>
               </button>
             </div>
           </div>
