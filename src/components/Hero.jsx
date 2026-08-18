@@ -33,11 +33,22 @@ export default function Hero({ currentUser, onOpenAuth, onSubscribeSuccess }) {
       }),
     })
     .then((res) => res.json())
-    .catch((err) => console.error(err))
+    .then((data) => {
+      if (data.alreadySubscribed) {
+        alert('이미 구독 중인 이메일입니다. 😊\n구독 취소는 하단 푸터의 "구독 취소" 버튼을 이용해 주세요.');
+      } else if (data.success) {
+        onSubscribeSuccess(email);
+        setEmail('');
+      } else {
+        alert(data.message || '구독 처리 중 오류가 발생했습니다.');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+    })
     .finally(() => {
       setIsLoading(false);
-      onSubscribeSuccess(email);
-      setEmail('');
     });
   };
 

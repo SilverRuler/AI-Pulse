@@ -968,9 +968,14 @@ body {
   }
 
   /* Footer Mobile */
+  /* Footer Mobile — brand 전체폭, 두 링크 섹션은 나란히 2열 */
   .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .footer-brand {
+    grid-column: 1 / -1; /* 브랜드 설명은 전체 폭 */
   }
 
   .footer-bottom {
