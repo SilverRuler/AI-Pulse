@@ -239,9 +239,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                 <div style={{ position: 'relative' }}>
                   <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                   <input
-                    type="password"
+                    type="text"
                     required
-                    autoComplete="current-password"
+                    autoComplete="off"
                     value={loginPw}
                     onChange={(e) => setLoginPw(e.target.value)}
                     placeholder="비밀번호를 입력하세요"
@@ -253,7 +253,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                       borderRadius: 'var(--radius-sm)',
                       color: 'var(--text-primary)',
                       fontSize: '0.95rem',
-                      outline: 'none'
+                      outline: 'none',
+                      WebkitTextSecurity: 'disc'
                     }}
                   />
                 </div>
@@ -315,9 +316,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                     비밀번호 <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
-                    type="password"
+                    type="text"
                     required
-                    autoComplete="new-password"
+                    autoComplete="off"
                     value={signupPw}
                     onChange={(e) => setSignupPw(e.target.value)}
                     placeholder="4자리 이상"
@@ -329,7 +330,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                       borderRadius: 'var(--radius-sm)',
                       color: 'var(--text-primary)',
                       fontSize: '0.9rem',
-                      outline: 'none'
+                      outline: 'none',
+                      WebkitTextSecurity: 'disc'
                     }}
                   />
                 </div>
@@ -338,9 +340,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                     비밀번호 확인 <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
-                    type="password"
+                    type="text"
                     required
-                    autoComplete="new-password"
+                    autoComplete="off"
                     value={signupPwConfirm}
                     onChange={(e) => setSignupPwConfirm(e.target.value)}
                     placeholder="비밀번호 재입력"
@@ -352,7 +354,8 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                       borderRadius: 'var(--radius-sm)',
                       color: 'var(--text-primary)',
                       fontSize: '0.9rem',
-                      outline: 'none'
+                      outline: 'none',
+                      WebkitTextSecurity: 'disc'
                     }}
                   />
                 </div>
