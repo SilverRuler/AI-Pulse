@@ -17,25 +17,31 @@ export default async function handler(req, res) {
     const redis = getRedis();
     if (!redis) return res.status(500).json({ success: false, error: 'Redis connection missing' });
 
-    // Fetch all subscribers, filter out the target email, re-store
+    // @upstash/redis already auto-parses JSON, so items are already objects (not strings)
     const existingList = await redis.lrange('subscribers:list', 0, -1);
 
-    const found = existingList.some(item => {
-      try { return JSON.parse(item).email === email; } catch { return false; }
-    });
+    const getEmail = (item) => {
+      if (!item) return null;
+      // item may be an object (auto-parsed by @upstash/redis) or a string
+      if (typeof item === 'object') return item.email || null;
+      try { return JSON.parse(item).email; } catch { return null; }
+    };
+
+    const found = existingList.some(item => getEmail(item) === email);
 
     if (!found) {
       return res.status(200).json({ success: false, notFound: true, message: '구독 정보를 찾을 수 없습니다.' });
     }
 
-    const filtered = existingList.filter(item => {
-      try { return JSON.parse(item).email !== email; } catch { return true; }
-    });
+    const filtered = existingList.filter(item => getEmail(item) !== email);
 
-    // Replace the entire list atomically
+    // Replace list: delete then re-push as JSON strings
     await redis.del('subscribers:list');
     if (filtered.length > 0) {
-      await redis.rpush('subscribers:list', ...filtered);
+      const serialized = filtered.map(item =>
+        typeof item === 'string' ? item : JSON.stringify(item)
+      );
+      await redis.rpush('subscribers:list', ...serialized);
     }
 
     console.log(`[Upstash Redis] Unsubscribed: ${email}`);
