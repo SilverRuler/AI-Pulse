@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { getRedis } from './_redis.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,10 +15,27 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { userId, userPhone, userAddress, applicantName, replyEmail } = req.body || {};
+    let { userId, userPhone, userAddress, applicantName, replyEmail } = req.body || {};
 
     if (!applicantName || !replyEmail) {
       return res.status(400).json({ success: false, error: '이름과 이메일을 모두 입력해 주세요.' });
+    }
+
+    const redis = getRedis();
+    if (redis && userId) {
+      const userRaw = await redis.get(`user:${userId}`);
+      if (userRaw) {
+        let userObj = userRaw;
+        if (typeof userRaw === 'string') {
+          try { userObj = JSON.parse(userRaw); } catch(e){}
+        }
+        if (!userAddress || userAddress.trim() === '') {
+          userAddress = userObj.address || '';
+        }
+        if (!userPhone || userPhone.trim() === '') {
+          userPhone = userObj.phone || '';
+        }
+      }
     }
 
     const resend = new Resend(process.env.RESEND_API_KEY);
