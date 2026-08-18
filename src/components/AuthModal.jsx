@@ -243,7 +243,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess, initialMode 
                 회원가입이 완료되었습니다! 🎉
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                서버 SQLite DB에 안전하게 저장되었습니다.<br />
+                Upstash Redis에 안전하게 저장되었습니다.<br />
                 <strong>{signupId}</strong>님 환영합니다.
               </p>
             </div>
