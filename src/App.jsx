@@ -301,6 +301,7 @@ export default function App() {
         ) : currentView === 'archive' ? (
           /* Full Archive View with All Articles */
           <ArchiveFeed
+            key={initialArchiveCategory}
             newsletters={newslettersList}
             onOpenReader={handleOpenReader}
             isFullPage={true}
