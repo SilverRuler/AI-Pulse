@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Archive, Clock, Search, Heart, Eye, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
 import { categories } from '../data/newsletters';
 
@@ -7,55 +7,33 @@ export default function ArchiveFeed({
   onOpenReader,
   isFullPage = false,
   onGoHome,
-  activeCategory = 'all',
-  onSelectCategory,
   userLikes = [],
   onToggleLike
 }) {
+  // ArchiveFeed manages its OWN category state internally.
+  // No dependency on parent for filtering -- avoids sync bugs entirely.
+  const [selectedTab, setSelectedTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const currentCategory = activeCategory || 'all';
-
-  const handleTabClick = (catId) => {
-    if (onSelectCategory) {
-      onSelectCategory(catId);
-    }
-  };
-
-  // Precise category filter logic
+  // Filter strictly by item.category field
   const filteredNewsletters = newsletters.filter((item) => {
-    let matchesCategory = false;
-    if (currentCategory === 'all') {
-      matchesCategory = true;
-    } else if (currentCategory === 'care') {
-      matchesCategory = item.category === 'care' || item.categoryName?.includes('돌봄');
-    } else if (currentCategory === 'nursing') {
-      matchesCategory = item.category === 'nursing' || item.categoryName?.includes('요양');
-    } else if (currentCategory === 'info') {
-      matchesCategory = item.category === 'info' || item.categoryName?.includes('정보');
-    } else if (currentCategory === 'health') {
-      matchesCategory = item.category === 'health' || item.categoryName?.includes('건강');
-    } else if (currentCategory === 'policy') {
-      matchesCategory = item.category === 'policy' || item.categoryName?.includes('정책') || item.categoryName?.includes('복지');
-    } else {
-      matchesCategory = item.category === currentCategory || item.categoryName === currentCategory;
-    }
+    const matchesCategory = selectedTab === 'all' ? true : item.category === selectedTab;
 
+    const q = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      (item.title && item.title.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (item.summary && item.summary.toLowerCase().includes(searchQuery.toLowerCase()));
+      q === '' ||
+      (item.title && item.title.toLowerCase().includes(q)) ||
+      (item.summary && item.summary.toLowerCase().includes(q));
 
     return matchesCategory && matchesSearch;
   });
 
-  // Limit 12 (3x4) on Home page, Full on Archive page
   const displayedNewsletters = isFullPage ? filteredNewsletters : filteredNewsletters.slice(0, 12);
   const showMoreButton = !isFullPage && filteredNewsletters.length > 12;
 
   return (
     <section id="archive" style={{ marginBottom: isFullPage ? '40px' : '80px', padding: isFullPage ? '40px 0 80px' : '0' }}>
       <div className="container">
-        {/* Full page header with Back button */}
         {isFullPage && (
           <div style={{ marginBottom: '24px' }}>
             <button
@@ -104,20 +82,20 @@ export default function ArchiveFeed({
           </div>
         </div>
 
-        {/* Category Filters */}
+        {/* Category Filter Tabs */}
         <div className="filter-tabs">
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => handleTabClick(cat.id)}
-              className={`filter-btn ${currentCategory === cat.id ? 'active' : ''}`}
+              onClick={() => setSelectedTab(cat.id)}
+              className={`filter-btn ${selectedTab === cat.id ? 'active' : ''}`}
             >
               <span>{cat.name}</span>
             </button>
           ))}
         </div>
 
-        {/* Archive Cards Grid (3x4 = 12 on home, full on archive view) */}
+        {/* Archive Cards Grid */}
         <div className="archive-grid">
           {displayedNewsletters.length > 0 ? (
             displayedNewsletters.map((item) => {
@@ -182,10 +160,10 @@ export default function ArchiveFeed({
           ) : (
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
               <p style={{ fontSize: '1rem', marginBottom: '12px' }}>
-                선택하신 <strong>'{categories.find((c) => c.id === currentCategory)?.name || currentCategory}'</strong> 카테고리에 등록된 기사가 없습니다.
+                선택하신 <strong>'{categories.find((c) => c.id === selectedTab)?.name || selectedTab}'</strong> 카테고리에 등록된 기사가 없습니다.
               </p>
               <button
-                onClick={() => handleTabClick('all')}
+                onClick={() => setSelectedTab('all')}
                 className="btn-primary"
                 style={{ padding: '8px 18px', fontSize: '0.85rem' }}
               >
@@ -200,10 +178,7 @@ export default function ArchiveFeed({
         {showMoreButton && (
           <div style={{ textAlign: 'center', marginTop: '40px' }}>
             <button
-              onClick={() => {
-                if (onSelectCategory) onSelectCategory('all');
-                window.location.hash = '#archive';
-              }}
+              onClick={() => { window.location.hash = '#archive'; }}
               className="btn-primary"
               style={{
                 padding: '14px 32px',
