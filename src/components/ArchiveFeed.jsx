@@ -98,10 +98,10 @@ export default function ArchiveFeed({
         {/* Archive Cards Grid */}
         <div className="archive-grid">
           {displayedNewsletters.length > 0 ? (
-            displayedNewsletters.map((item) => {
+            displayedNewsletters.map((item, idx) => {
               const isLiked = userLikes.includes(item.id);
               return (
-                <article key={item.id} className="archive-card" onClick={() => onOpenReader(item)}>
+                <article key={`${item.id}-${idx}`} className="archive-card" onClick={() => onOpenReader(item)}>
                   <div className="archive-card-header">
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                       <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
