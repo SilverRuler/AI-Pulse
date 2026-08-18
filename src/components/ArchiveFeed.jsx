@@ -50,7 +50,7 @@ export default function ArchiveFeed({
 
   // Limit 12 (3x4) on Home page, Full on Archive page
   const displayedNewsletters = isFullPage ? filteredNewsletters : filteredNewsletters.slice(0, 12);
-  const showMoreButton = !isFullPage && newsletters.length > 12;
+  const showMoreButton = !isFullPage && filteredNewsletters.length > 12;
 
   return (
     <section id="archive" style={{ marginBottom: isFullPage ? '40px' : '80px', padding: isFullPage ? '40px 0 80px' : '0' }}>
@@ -154,38 +154,25 @@ export default function ArchiveFeed({
                           background: 'transparent',
                           border: 'none',
                           cursor: 'pointer',
-                          position: 'relative',
-                          display: 'inline-flex',
+                          display: 'flex',
                           alignItems: 'center',
-                          justifyContent: 'center',
-                          padding: '2px',
+                          gap: '4px',
+                          color: 'var(--text-muted)',
+                          padding: 0,
+                          fontSize: 'inherit'
                         }}
                         title={isLiked ? '좋아요 취소' : '좋아요'}
                       >
                         <Heart
-                          size={24}
+                          size={13}
                           style={{
                             color: '#ef4444',
-                            fill: isLiked ? '#ef4444' : 'rgba(239, 68, 68, 0.1)',
+                            fill: isLiked ? '#ef4444' : 'none',
                             stroke: '#ef4444',
-                            strokeWidth: 1.5,
+                            strokeWidth: 2,
                           }}
                         />
-                        <span
-                          style={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            fontSize: '0.6rem',
-                            fontWeight: 800,
-                            color: isLiked ? '#ffffff' : '#ef4444',
-                            pointerEvents: 'none',
-                            marginTop: '-1px'
-                          }}
-                        >
-                          {item.likes > 99 ? '99+' : item.likes}
-                        </span>
+                        <span>{item.likes}</span>
                       </button>
                     </div>
                   </div>
@@ -214,8 +201,8 @@ export default function ArchiveFeed({
           <div style={{ textAlign: 'center', marginTop: '40px' }}>
             <button
               onClick={() => {
+                if (onSelectCategory) onSelectCategory('all');
                 window.location.hash = '#archive';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
               className="btn-primary"
               style={{
