@@ -28,31 +28,30 @@ export default function ReaderModal({ issue, onClose, onShare, userLikes = [], o
             {/* Like Button */}
             <button
               onClick={() => onToggleLike && onToggleLike(issue.id)}
-              className="icon-button"
               title={isLiked ? '좋아요 취소' : '좋아요'}
               style={{
-                color: 'var(--text-muted)',
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 padding: '6px 12px',
                 borderRadius: 'var(--radius-full)',
-                background: isLiked ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-subtle)',
+                background: isLiked ? 'rgba(239, 68, 68, 0.12)' : 'var(--bg-subtle)',
                 border: isLiked ? '1px solid #ef4444' : '1px solid var(--border-subtle)',
                 cursor: 'pointer',
-                fontWeight: 700
+                flexShrink: 0,
               }}
             >
               <Heart
-                size={16}
+                size={15}
                 style={{
                   color: '#ef4444',
                   fill: isLiked ? '#ef4444' : 'none',
                   stroke: '#ef4444',
                   strokeWidth: 2,
+                  flexShrink: 0,
                 }}
               />
-              <span style={{ fontSize: '0.85rem' }}>{issue.likes}</span>
+              <span style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-secondary)' }}>{issue.likes}</span>
             </button>
 
             {/* Share Deep-link Button */}
