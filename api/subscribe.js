@@ -1,8 +1,7 @@
 import { getRedis } from './_redis.js';
 import { Resend } from 'resend';
 
-// Initialize Resend
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Removed top-level resend init
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -100,11 +99,12 @@ export default async function handler(req, res) {
       </div>
     `;
 
+    // Initialize Resend inside the handler to prevent top-level crashes if env var is missing during build
+    const resend = new Resend(process.env.RESEND_API_KEY);
+
     // 4. Send Email via Resend
-    // Important: Using onboarding@resend.dev works for testing to your own email.
-    // If you add a verified domain to Resend later, change this to "newsletter@yourdomain.com".
     const { data, error } = await resend.emails.send({
-      from: '11 DayCare Letter <onboarding@resend.dev>',
+      from: '11 DayCare Letter <newsletter@daycare.silverruler.xyz>',
       to: email,
       subject: '[11 DayCare Letter] 구독을 환영합니다! 최근 주요 소식 10선 💌',
       html: htmlContent,
