@@ -46,7 +46,7 @@ export default function FeaturedIssue({ issue, onOpenReader, userLikes = [], onT
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
-                  color: isLiked ? '#ec4899' : 'var(--text-muted)',
+                  color: isLiked ? '#ef4444' : 'var(--text-muted)',
                   padding: 0,
                   fontSize: 'inherit'
                 }}
@@ -55,8 +55,9 @@ export default function FeaturedIssue({ issue, onOpenReader, userLikes = [], onT
                 <Heart
                   size={14}
                   style={{
-                    color: isLiked ? '#ec4899' : 'var(--text-muted)',
-                    fill: isLiked ? '#ec4899' : 'none'
+                    color: '#ef4444',
+                    fill: isLiked ? '#ef4444' : 'none',
+                    stroke: '#ef4444'
                   }}
                 />
                 <span>{issue.likes}</span>

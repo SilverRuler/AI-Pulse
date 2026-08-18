@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Archive, Clock, Search, Heart, Eye, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Archive, Clock, Search, Heart, Eye, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
 import { categories } from '../data/newsletters';
 
 export default function ArchiveFeed({
@@ -15,20 +15,21 @@ export default function ArchiveFeed({
   const [currentCategory, setCurrentCategory] = useState(activeCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Sync when parent activeCategory changes (e.g. from footer click)
   useEffect(() => {
     if (activeCategory) {
       setCurrentCategory(activeCategory);
     }
   }, [activeCategory]);
 
-  const handleCategoryChange = (catId) => {
+  const handleTabClick = (catId) => {
     setCurrentCategory(catId);
     if (onSelectCategory) {
       onSelectCategory(catId);
     }
   };
 
-  // Robust Category & Search Filter
+  // Precise category filter logic
   const filteredNewsletters = newsletters.filter((item) => {
     let matchesCategory = false;
     if (currentCategory === 'all') {
@@ -56,7 +57,7 @@ export default function ArchiveFeed({
 
   // Limit 12 (3x4) on Home page, Full on Archive page
   const displayedNewsletters = isFullPage ? filteredNewsletters : filteredNewsletters.slice(0, 12);
-  const showMoreButton = !isFullPage && (filteredNewsletters.length > 12 || newsletters.length > 12);
+  const showMoreButton = !isFullPage && newsletters.length > 12;
 
   return (
     <section id="archive" style={{ marginBottom: isFullPage ? '40px' : '80px', padding: isFullPage ? '40px 0 80px' : '0' }}>
@@ -85,7 +86,7 @@ export default function ArchiveFeed({
           <div className="section-title">
             <Archive size={20} style={{ color: 'var(--accent-primary)' }} />
             <span>
-              {isFullPage ? `지난 뉴스레터 아카이브 전체보기 (총 ${newsletters.length}개 발행됨)` : '지난 뉴스레터 아카이브'}
+              {isFullPage ? '지난 뉴스레터 아카이브 전체보기' : '지난 뉴스레터 아카이브'}
             </span>
           </div>
 
@@ -115,7 +116,7 @@ export default function ArchiveFeed({
           {categories.map((cat) => (
             <button
               key={cat.id}
-              onClick={() => handleCategoryChange(cat.id)}
+              onClick={() => handleTabClick(cat.id)}
               className={`filter-btn ${currentCategory === cat.id ? 'active' : ''}`}
             >
               <span>{cat.name}</span>
@@ -163,7 +164,7 @@ export default function ArchiveFeed({
                           display: 'flex',
                           alignItems: 'center',
                           gap: '4px',
-                          color: isLiked ? '#ec4899' : 'var(--text-muted)',
+                          color: isLiked ? '#ef4444' : 'var(--text-muted)',
                           padding: 0,
                           fontSize: 'inherit'
                         }}
@@ -172,8 +173,9 @@ export default function ArchiveFeed({
                         <Heart
                           size={13}
                           style={{
-                            color: isLiked ? '#ec4899' : 'var(--text-muted)',
-                            fill: isLiked ? '#ec4899' : 'none'
+                            color: isLiked ? '#ef4444' : '#ef4444',
+                            fill: isLiked ? '#ef4444' : 'none',
+                            stroke: '#ef4444'
                           }}
                         />
                         <span>{item.likes}</span>
@@ -184,8 +186,18 @@ export default function ArchiveFeed({
               );
             })
           ) : (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
-              검색 조건에 해당하는 뉴스레터가 없습니다.
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px 20px', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-md)', color: 'var(--text-muted)' }}>
+              <p style={{ fontSize: '1rem', marginBottom: '12px' }}>
+                선택하신 <strong>'{categories.find((c) => c.id === currentCategory)?.name || currentCategory}'</strong> 카테고리에 등록된 기사가 없습니다.
+              </p>
+              <button
+                onClick={() => handleTabClick('all')}
+                className="btn-primary"
+                style={{ padding: '8px 18px', fontSize: '0.85rem' }}
+              >
+                <RefreshCw size={14} />
+                <span>전체 이슈 보기</span>
+              </button>
             </div>
           )}
         </div>
@@ -214,7 +226,7 @@ export default function ArchiveFeed({
                 fontWeight: 700
               }}
             >
-              <span>지난 뉴스레터 아카이브 전체보기 (총 {newsletters.length}개 모두보기)</span>
+              <span>지난 뉴스레터 아카이브 전체보기</span>
               <ArrowRight size={18} style={{ color: 'var(--accent-primary)' }} />
             </button>
           </div>

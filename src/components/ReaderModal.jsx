@@ -25,29 +25,33 @@ export default function ReaderModal({ issue, onClose, onShare, userLikes = [], o
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {/* Like Button */}
+            {/* Like Button with Red Heart */}
             <button
               onClick={() => onToggleLike && onToggleLike(issue.id)}
               className="icon-button"
               title={isLiked ? '좋아요 취소' : '좋아요'}
               style={{
-                color: isLiked ? '#ec4899' : 'var(--text-muted)',
-                display: 'flex',
+                color: '#ef4444',
+                display: 'inline-flex',
                 alignItems: 'center',
-                gap: '4px',
-                padding: '6px 10px',
+                gap: '6px',
+                padding: '6px 12px',
                 borderRadius: 'var(--radius-full)',
-                background: isLiked ? 'rgba(236, 72, 153, 0.1)' : 'var(--bg-subtle)'
+                background: isLiked ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-subtle)',
+                border: isLiked ? '1px solid #ef4444' : '1px solid var(--border-subtle)',
+                cursor: 'pointer',
+                fontWeight: 700
               }}
             >
               <Heart
                 size={16}
                 style={{
-                  color: isLiked ? '#ec4899' : 'var(--text-muted)',
-                  fill: isLiked ? '#ec4899' : 'none'
+                  color: '#ef4444',
+                  fill: isLiked ? '#ef4444' : 'none',
+                  stroke: '#ef4444'
                 }}
               />
-              <span style={{ fontSize: '0.82rem', fontWeight: 700 }}>{issue.likes}</span>
+              <span style={{ fontSize: '0.85rem' }}>{issue.likes}</span>
             </button>
 
             {/* Share Deep-link Button */}
