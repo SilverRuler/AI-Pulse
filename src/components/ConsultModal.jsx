@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
-import { X, Phone, Heart, Send, CheckCircle2, ShieldCheck, HelpCircle } from 'lucide-react';
+import { X, Phone, Heart, Send, CheckCircle2, ShieldCheck, HelpCircle, Loader2 } from 'lucide-react';
+import { API_BASE_URL } from '../utils/api';
 
 export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth }) {
   const [isSuccess, setIsSuccess] = useState(false);
-  const [note, setNote] = useState('');
+  const [applicantName, setApplicantName] = useState('');
+  const [replyEmail, setReplyEmail] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleApplyClick = () => {
-    // 1. Check login
+  const isValid = applicantName.trim().length > 0 && replyEmail.includes('@');
+
+  const handleApplyClick = async () => {
     if (!currentUser) {
       alert('로그인이 필요합니다. 먼저 로그인 또는 회원가입을 진행해 주세요.');
       onClose();
@@ -16,16 +20,43 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
       return;
     }
 
-    // 2. Confirm sending mail to director
+    if (!isValid) return;
+
     const confirmed = window.confirm('센터 원장님에게 상담 요청 메일을 보내시겠습니까?');
-    if (confirmed) {
-      setIsSuccess(true);
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/consult`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          userPhone: currentUser.phone,
+          applicantName,
+          replyEmail
+        })
+      });
+      const data = await res.json();
+      
+      if (data.success) {
+        setIsSuccess(true);
+      } else {
+        alert(data.error || '상담 요청 중 오류가 발생했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleResetAndClose = () => {
     setIsSuccess(false);
-    setNote('');
+    setApplicantName('');
+    setReplyEmail('');
+    setIsLoading(false);
     onClose();
   };
 
@@ -56,8 +87,8 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
                 상담 요청이 원장님께 전달되었습니다! 🎉
               </h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.92rem', lineHeight: 1.6, marginBottom: '20px' }}>
-                <strong>{currentUser?.id}</strong>님의 연락처(<strong>{currentUser?.phone}</strong>)로<br />
-                센터 원장님이 직접 확인 후 빠른 시일 내에 친절히 상담 전화를 드리겠습니다.
+                <strong>{applicantName}</strong>님께서 남겨주신 연락처와 이메일로<br />
+                센터 원장님이 직접 확인 후 빠른 시일 내에 친절히 상담 연락을 드리겠습니다.
               </p>
               <button
                 onClick={handleResetAndClose}
@@ -94,7 +125,6 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
                 부담 없이 편하게 연락주세요.
               </p>
 
-              {/* Phone Highlight Banner */}
               <div
                 style={{
                   background: 'var(--bg-subtle)',
@@ -129,9 +159,56 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
               </p>
 
               {currentUser ? (
-                <div style={{ padding: '10px 14px', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.85rem', marginBottom: '16px', textAlign: 'left' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>신청자 정보: </span>
-                  <strong>{currentUser.id}</strong> ({currentUser.phone || '연락처 등록됨'})
+                <div style={{ padding: '16px', background: 'var(--bg-subtle)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)', fontSize: '0.85rem', marginBottom: '16px', textAlign: 'left' }}>
+                  <div style={{ marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--border-subtle)' }}>
+                    <span style={{ color: 'var(--text-muted)', display: 'inline-block', width: '80px' }}>계정 정보: </span>
+                    <strong>{currentUser.id}</strong> ({currentUser.phone || '연락처 등록됨'})
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '4px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        신청자 이름 <span style={{ color: '#ef4444' }}>*</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={applicantName}
+                        onChange={(e) => setApplicantName(e.target.value)}
+                        placeholder="이름을 입력해 주세요"
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid var(--border-subtle)',
+                          borderRadius: 'var(--radius-sm)',
+                          outline: 'none',
+                          fontSize: '0.85rem',
+                          background: 'var(--bg-primary)',
+                          color: 'var(--text-primary)'
+                        }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', marginBottom: '4px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                        회신받을 이메일 <span style={{ color: '#ef4444' }}>*</span>
+                      </label>
+                      <input
+                        type="email"
+                        value={replyEmail}
+                        onChange={(e) => setReplyEmail(e.target.value)}
+                        placeholder="example@email.com"
+                        style={{
+                          width: '100%',
+                          padding: '8px 12px',
+                          border: '1px solid var(--border-subtle)',
+                          borderRadius: 'var(--radius-sm)',
+                          outline: 'none',
+                          fontSize: '0.85rem',
+                          background: 'var(--bg-primary)',
+                          color: 'var(--text-primary)'
+                        }}
+                      />
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '16px' }}>
@@ -141,11 +218,23 @@ export default function ConsultModal({ isOpen, onClose, currentUser, onOpenAuth 
 
               <button
                 onClick={handleApplyClick}
+                disabled={!currentUser || !isValid || isLoading}
                 className="btn-primary"
-                style={{ width: '100%', justifyContent: 'center', padding: '13px', fontSize: '0.98rem' }}
+                style={{ 
+                  width: '100%', 
+                  justifyContent: 'center', 
+                  padding: '13px', 
+                  fontSize: '0.98rem',
+                  opacity: (!currentUser || !isValid || isLoading) ? 0.6 : 1,
+                  cursor: (!currentUser || !isValid || isLoading) ? 'not-allowed' : 'pointer'
+                }}
               >
-                <Send size={16} />
-                <span>상담 신청하기</span>
+                {isLoading ? (
+                  <Loader2 size={18} className="spin" />
+                ) : (
+                  <Send size={16} />
+                )}
+                <span>{isLoading ? '신청 중...' : '상담 신청하기'}</span>
               </button>
             </div>
           )}
