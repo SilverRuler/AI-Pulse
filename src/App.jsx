@@ -22,13 +22,25 @@ function normalizeNewsletters(rawList) {
   // Check if all issue numbers are identical (e.g. all 1)
   const allSameNumber = rawList.every((item) => item.issueNumber === rawList[0].issueNumber);
 
+  // Load local counts
+  let localCounts = {};
+  try {
+    const saved = localStorage.getItem('11daycare_local_counts');
+    if (saved) localCounts = JSON.parse(saved);
+  } catch (e) {}
+
   return rawList.map((item, index) => {
     // If all are same, assign descending Issue number (e.g. Issue #20 down to #1)
     const issueNum = allSameNumber ? total - index : (item.issueNumber || (total - index));
     
     // Ensure views and likes have valid numbers
-    const views = item.views ? (typeof item.views === 'number' ? item.views : parseInt(String(item.views).replace(/[^0-9]/g, '')) || 120 + index * 15) : (150 + (total - index) * 23);
-    const likes = typeof item.likes === 'number' ? item.likes : (12 + (index % 7));
+    let views = item.views ? (typeof item.views === 'number' ? item.views : parseInt(String(item.views).replace(/[^0-9]/g, '')) || 120 + index * 15) : (150 + (total - index) * 23);
+    let likes = typeof item.likes === 'number' ? item.likes : (12 + (index % 7));
+
+    if (localCounts[item.id]) {
+      if (localCounts[item.id].views) views += localCounts[item.id].views;
+      if (localCounts[item.id].likes) likes += localCounts[item.id].likes;
+    }
 
     return {
       ...item,
@@ -39,6 +51,17 @@ function normalizeNewsletters(rawList) {
     };
   });
 }
+
+// Helper to save local increments
+const updateLocalCounts = (issueId, field, delta) => {
+  try {
+    const saved = localStorage.getItem('11daycare_local_counts');
+    const counts = saved ? JSON.parse(saved) : {};
+    if (!counts[issueId]) counts[issueId] = { views: 0, likes: 0 };
+    counts[issueId][field] = (counts[issueId][field] || 0) + delta;
+    localStorage.setItem('11daycare_local_counts', JSON.stringify(counts));
+  } catch (e) {}
+};
 
 export default function App() {
   const [theme, setTheme] = useState('light');
@@ -200,6 +223,9 @@ export default function App() {
         likes: Math.max(0, (prev.likes || 0) + (isAlreadyLiked ? -1 : 1))
       }));
     }
+
+    // Persist to local counts so it survives refresh
+    updateLocalCounts(issueId, 'likes', isAlreadyLiked ? -1 : 1);
   };
 
   // Open Reader Modal + Increment View Count
@@ -215,6 +241,10 @@ export default function App() {
     };
 
     setSelectedIssue(updatedIssue);
+    
+    // Persist to local counts so it survives refresh
+    updateLocalCounts(issue.id, 'views', 1);
+
     // Update hash for deep-link
     window.location.hash = `#issue=${issue.id}`;
   };
