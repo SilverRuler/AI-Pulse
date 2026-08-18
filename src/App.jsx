@@ -15,19 +15,12 @@ import { newsletters as defaultNewsletters } from './data/newsletters';
 import { API_BASE_URL } from './utils/api';
 
 // Helper to normalize and auto-assign unique issue numbers if they are duplicate or 1
-function normalizeNewsletters(rawList) {
+function normalizeNewsletters(rawList, globalCounts = { views: {}, likes: {} }) {
   if (!Array.isArray(rawList) || rawList.length === 0) return defaultNewsletters;
 
   const total = rawList.length;
   // Check if all issue numbers are identical (e.g. all 1)
   const allSameNumber = rawList.every((item) => item.issueNumber === rawList[0].issueNumber);
-
-  // Load local counts
-  let localCounts = {};
-  try {
-    const saved = localStorage.getItem('11daycare_local_counts');
-    if (saved) localCounts = JSON.parse(saved);
-  } catch (e) {}
 
   return rawList.map((item, index) => {
     // If all are same, assign descending Issue number (e.g. Issue #20 down to #1)
@@ -37,9 +30,12 @@ function normalizeNewsletters(rawList) {
     let views = item.views ? (typeof item.views === 'number' ? item.views : parseInt(String(item.views).replace(/[^0-9]/g, '')) || 120 + index * 15) : (150 + (total - index) * 23);
     let likes = typeof item.likes === 'number' ? item.likes : (12 + (index % 7));
 
-    if (localCounts[item.id]) {
-      if (localCounts[item.id].views) views += localCounts[item.id].views;
-      if (localCounts[item.id].likes) likes += localCounts[item.id].likes;
+    // Add global counts from Redis
+    if (globalCounts.views && globalCounts.views[item.id]) {
+      views += parseInt(globalCounts.views[item.id] || 0);
+    }
+    if (globalCounts.likes && globalCounts.likes[item.id]) {
+      likes += parseInt(globalCounts.likes[item.id] || 0);
     }
 
     return {
@@ -52,15 +48,13 @@ function normalizeNewsletters(rawList) {
   });
 }
 
-// Helper to save local increments
-const updateLocalCounts = (issueId, field, delta) => {
-  try {
-    const saved = localStorage.getItem('11daycare_local_counts');
-    const counts = saved ? JSON.parse(saved) : {};
-    if (!counts[issueId]) counts[issueId] = { views: 0, likes: 0 };
-    counts[issueId][field] = (counts[issueId][field] || 0) + delta;
-    localStorage.setItem('11daycare_local_counts', JSON.stringify(counts));
-  } catch (e) {}
+// Helper to save global increments
+const updateGlobalCounts = (issueId, field, delta) => {
+  fetch(`${API_BASE_URL}/api/counts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ issueId, field, delta })
+  }).catch(e => console.error('Failed to update counts', e));
 };
 
 export default function App() {
@@ -100,16 +94,17 @@ export default function App() {
       console.error(e);
     }
 
-    // Fetch latest newsletters from Redis API
-    fetch(`${API_BASE_URL}/api/newsletters`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && Array.isArray(data.newsletters) && data.newsletters.length > 0) {
-          const normalized = normalizeNewsletters(data.newsletters);
-          setNewslettersList(normalized);
-        }
-      })
-      .catch((err) => console.error('Failed to load newsletters from API', err));
+    // Fetch latest newsletters and global counts from Redis API
+    Promise.all([
+      fetch(`${API_BASE_URL}/api/newsletters`).then((res) => res.json()).catch(() => ({})),
+      fetch(`${API_BASE_URL}/api/counts`).then((res) => res.json()).catch(() => ({}))
+    ]).then(([newsData, countsData]) => {
+      if (newsData.success && Array.isArray(newsData.newsletters) && newsData.newsletters.length > 0) {
+        const globalCounts = countsData?.counts || { views: {}, likes: {} };
+        const normalized = normalizeNewsletters(newsData.newsletters, globalCounts);
+        setNewslettersList(normalized);
+      }
+    });
   }, [theme]);
 
   // Hash & Deep-link Router
@@ -224,8 +219,8 @@ export default function App() {
       }));
     }
 
-    // Persist to local counts so it survives refresh
-    updateLocalCounts(issueId, 'likes', isAlreadyLiked ? -1 : 1);
+    // Persist to global counts via backend
+    updateGlobalCounts(issueId, 'likes', isAlreadyLiked ? -1 : 1);
   };
 
   // Open Reader Modal + Increment View Count
@@ -242,8 +237,8 @@ export default function App() {
 
     setSelectedIssue(updatedIssue);
     
-    // Persist to local counts so it survives refresh
-    updateLocalCounts(issue.id, 'views', 1);
+    // Persist to global counts via backend
+    updateGlobalCounts(issue.id, 'views', 1);
 
     // Update hash for deep-link
     window.location.hash = `#issue=${issue.id}`;
