@@ -384,6 +384,7 @@ export default function App() {
         isOpen={isSubscribeModalOpen}
         onClose={() => setIsSubscribeModalOpen(false)}
         subscribedEmail={subscribedEmail}
+        currentUser={currentUser}
       />
 
       {/* Free Care Grade Consultation Modal */}
