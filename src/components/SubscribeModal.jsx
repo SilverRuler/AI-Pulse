@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { X, CheckCircle, Sparkles, Mail, Send } from 'lucide-react';
 import { categories } from '../data/newsletters';
 
-export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDirectSubscribe }) {
+import { API_BASE_URL } from '../utils/api';
+
+export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDirectSubscribe, currentUser }) {
   const [email, setEmail] = useState('');
   const [selectedTopics, setSelectedTopics] = useState(categories.filter(c => c.id !== 'all').map(c => c.id));
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
@@ -16,12 +19,37 @@ export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDir
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const finalEmail = subscribedEmail || email;
     if (!finalEmail) return;
 
-    setIsSuccess(true);
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: finalEmail,
+          userId: currentUser?.id || 'guest',
+          topics: selectedTopics.map(t => categories.find(c => c.id === t)?.name || t)
+        }),
+      });
+      const data = await res.json();
+      if (data.alreadySubscribed) {
+        alert('이미 구독 중인 이메일입니다. 😊\n구독 취소는 하단 푸터의 "구독 취소" 버튼을 이용해 주세요.');
+        onClose();
+      } else if (data.success) {
+        setIsSuccess(true);
+      } else {
+        alert(data.message || '구독 처리 중 오류가 발생했습니다.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -119,9 +147,9 @@ export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDir
                 </div>
               </div>
 
-              <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '14px' }}>
+              <button type="submit" disabled={isLoading} className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '14px', opacity: isLoading ? 0.7 : 1 }}>
                 <Send size={16} />
-                <span>구독 시작하기</span>
+                <span>{isLoading ? '처리 중...' : '구독 완료하기'}</span>
               </button>
             </form>
           )}

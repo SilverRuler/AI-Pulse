@@ -32,6 +32,12 @@ export default async function handler(req, res) {
   if (req.method === 'POST' || req.method === 'GET') {
     try {
       if (req.method === 'POST' && !isBot && ip !== 'unknown') {
+        const kstTime = new Date(new Date().getTime() + 9 * 60 * 60 * 1000).toISOString().replace('Z', '+09:00');
+        // 매 방문마다 로그 기록 (IP, 시간, 접속 환경 일부)
+        await redis.lpush('visitors:logs', JSON.stringify({ ip, datetime: kstTime, ua: userAgent.substring(0, 30) }));
+        // 무한정 커지는 것을 방지 (최근 5만 건 유지)
+        await redis.ltrim('visitors:logs', 0, 49999);
+
         const added = await redis.sadd(todayKey, ip);
         if (added) {
           await redis.incr(totalKey);

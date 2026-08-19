@@ -193,7 +193,7 @@ export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin, o
               <Users size={14} />
               <span>오늘 방문자: <strong>{visitors.today.toLocaleString()}</strong></span>
               <span style={{ margin: '0 4px', opacity: 0.5 }}>|</span>
-              <span>누적: <strong>{visitors.total.toLocaleString()}</strong></span>
+              <span>전체 방문자: <strong>{visitors.total.toLocaleString()}</strong></span>
             </div>
             <span style={{ fontSize: '0.85rem' }}>
               © 2026 11 DayCare Letter. All rights reserved. <span className="powered-by">Powered by AI Health Automation.</span>
