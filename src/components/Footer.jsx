@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { HeartPulse, ArrowUp, Database, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { HeartPulse, ArrowUp, Database, X, Users } from 'lucide-react';
 import { API_BASE_URL } from '../utils/api';
 
 export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin, onSelectCategory, onSubscribeClick }) {
@@ -7,6 +7,18 @@ export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin, o
   const [unsubEmail, setUnsubEmail] = useState('');
   const [unsubLoading, setUnsubLoading] = useState(false);
   const [unsubMsg, setUnsubMsg] = useState('');
+  const [visitors, setVisitors] = useState({ today: 0, total: 0 });
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/visitors`, { method: 'POST' })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setVisitors({ today: data.today, total: data.total });
+        }
+      })
+      .catch(err => console.error('Failed to load visitors', err));
+  }, []);
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -176,7 +188,17 @@ export default function Footer({ currentUser, onOpenConsultModal, onOpenAdmin, o
         </div>
 
         <div className="footer-bottom">
-          <span>© 2026 11 DayCare Letter. All rights reserved. Powered by AI Health Automation.</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+              <Users size={14} />
+              <span>오늘 방문자: <strong>{visitors.today.toLocaleString()}</strong></span>
+              <span style={{ margin: '0 4px', opacity: 0.5 }}>|</span>
+              <span>누적: <strong>{visitors.total.toLocaleString()}</strong></span>
+            </div>
+            <span style={{ fontSize: '0.85rem' }}>
+              © 2026 11 DayCare Letter. All rights reserved. <span className="powered-by">Powered by AI Health Automation.</span>
+            </span>
+          </div>
           <button
             onClick={scrollToTop}
             className="icon-button"

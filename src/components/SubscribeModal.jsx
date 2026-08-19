@@ -4,7 +4,7 @@ import { categories } from '../data/newsletters';
 
 export default function SubscribeModal({ isOpen, onClose, subscribedEmail, onDirectSubscribe }) {
   const [email, setEmail] = useState('');
-  const [selectedTopics, setSelectedTopics] = useState(['care', 'policy']);
+  const [selectedTopics, setSelectedTopics] = useState(categories.filter(c => c.id !== 'all').map(c => c.id));
   const [isSuccess, setIsSuccess] = useState(false);
 
   if (!isOpen) return null;

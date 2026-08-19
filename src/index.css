@@ -1004,3 +1004,14 @@ body {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+.powered-by {
+  display: inline;
+}
+@media (max-width: 768px) {
+  .powered-by {
+    display: block;
+    margin-top: 4px;
+  }
+}
+
