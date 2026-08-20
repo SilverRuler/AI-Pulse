@@ -70,7 +70,7 @@ export default function ArchiveFeed({
           <div className="section-title">
             <Archive size={20} style={{ color: 'var(--accent-primary)' }} />
             <span>
-              {isFullPage ? `지난 뉴스레터 아카이브 전체보기(${newsletters.length})` : `지난 뉴스레터 아카이브(${newsletters.length})`}
+              {isFullPage ? `지난 뉴스레터 아카이브 전체보기(${newsletters.length})` : '지난 뉴스레터 아카이브'}
             </span>
           </div>
 
