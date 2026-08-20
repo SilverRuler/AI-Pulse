@@ -15,6 +15,7 @@ export default function ArchiveFeed({
   // It is only read once on mount via useState initializer
   const [selectedTab, setSelectedTab] = useState(initialCategory || 'all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
 
   // Filter strictly by item.category field
   const filteredNewsletters = newsletters.filter((item) => {
@@ -29,7 +30,18 @@ export default function ArchiveFeed({
     return matchesCategory && matchesSearch;
   });
 
-  const displayedNewsletters = isFullPage ? filteredNewsletters : filteredNewsletters.slice(0, 12);
+  // Reset page to 1 when filters change
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedTab, searchQuery]);
+
+  const ITEMS_PER_PAGE = 18;
+  const totalPages = Math.ceil(filteredNewsletters.length / ITEMS_PER_PAGE);
+
+  const displayedNewsletters = isFullPage 
+    ? filteredNewsletters.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
+    : filteredNewsletters.slice(0, 12);
+
   const showMoreButton = !isFullPage && filteredNewsletters.length > 12;
 
   return (
@@ -58,7 +70,7 @@ export default function ArchiveFeed({
           <div className="section-title">
             <Archive size={20} style={{ color: 'var(--accent-primary)' }} />
             <span>
-              {isFullPage ? '지난 뉴스레터 아카이브 전체보기' : '지난 뉴스레터 아카이브'}
+              {isFullPage ? `지난 뉴스레터 아카이브 전체보기(${newsletters.length})` : `지난 뉴스레터 아카이브(${newsletters.length})`}
             </span>
           </div>
 
@@ -174,6 +186,55 @@ export default function ArchiveFeed({
             </div>
           )}
         </div>
+
+        {/* Pagination Controls for Full Page */}
+        {isFullPage && totalPages > 1 && (
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '16px', marginTop: '40px' }}>
+            <button
+              onClick={() => {
+                setCurrentPage(p => Math.max(1, p - 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              disabled={currentPage === 1}
+              style={{
+                padding: '10px 20px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                background: currentPage === 1 ? 'transparent' : 'var(--bg-card)',
+                color: currentPage === 1 ? 'var(--text-muted)' : 'var(--text-primary)',
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <ArrowLeft size={16} /> 이전 페이지
+            </button>
+            <span style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() => {
+                setCurrentPage(p => Math.min(totalPages, p + 1));
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              disabled={currentPage === totalPages}
+              style={{
+                padding: '10px 20px',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--border-subtle)',
+                background: currentPage === totalPages ? 'transparent' : 'var(--bg-card)',
+                color: currentPage === totalPages ? 'var(--text-muted)' : 'var(--text-primary)',
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              다음 페이지 <ArrowRight size={16} />
+            </button>
+          </div>
+        )}
 
         {/* Load More Button on Home page */}
         {showMoreButton && (
